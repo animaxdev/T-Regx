@@ -12,12 +12,15 @@ class ReplaceOperationImpl implements ReplaceOperation
     private $subject;
     /** @var ReplacerWith */
     private $replacerWith;
+    /** @var ReplacerCallback */
+    private $replacerCallback;
 
     public function __construct(Definition $definition, Subject $subject, int $limit)
     {
         $this->definition = $definition;
         $this->subject = $subject;
         $this->replacerWith = new ReplacerWith($this->definition, $this->subject, $limit);
+        $this->replacerCallback = new ReplacerCallback($definition, $subject, $limit);
     }
 
     public function with(string $replacement): string
@@ -32,7 +35,7 @@ class ReplaceOperationImpl implements ReplaceOperation
 
     public function callback(callable $replacer): string
     {
-        // TODO: Implement callback() method.
+        return $this->replacerCallback->replace($replacer);
     }
 
     public function withGroup($nameOrIndex): string
