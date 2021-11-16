@@ -52,6 +52,18 @@ class Test extends TestCase
     /**
      * @test
      */
+    public function all_withGroup()
+    {
+        // when
+        $replaced = pattern('<(\d+)>')->replaced('<127>.230.<36>.10')->all()->withGroup(1);
+
+        // then
+        $this->assertSame('127.230.36.10', $replaced);
+    }
+
+    /**
+     * @test
+     */
     public function first_with()
     {
         // when
