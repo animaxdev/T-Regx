@@ -14,21 +14,26 @@ class ReplacerWith
     private $subject;
     /** @var int */
     private $limit;
+    /** @var Listener */
+    private $listener;
 
-    public function __construct(Definition $definition, Subject $subject, int $limit)
+    public function __construct(Definition $definition, Subject $subject, int $limit, Listener $listener)
     {
         $this->definition = $definition;
         $this->subject = $subject;
         $this->limit = $limit;
+        $this->listener = $listener;
     }
 
     public function with(string $replacement): string
     {
-        return preg::replace($this->definition->pattern, ReplaceReferences::quote($replacement), $this->subject->getSubject(), $this->limit);
+        return $this->withReferences(ReplaceReferences::quote($replacement));
     }
 
     public function withReferences(string $replacement): string
     {
-        return preg::replace($this->definition->pattern, $replacement, $this->subject->getSubject(), $this->limit);
+        $replace = preg::replace($this->definition->pattern, $replacement, $this->subject->getSubject(), $this->limit, $count);
+        $this->listener->replaced($count);
+        return $replace;
     }
 }

@@ -14,6 +14,4 @@ interface Basic extends ReplaceOperation
     public function atMost(): ReplaceExpectation;
 
     public function atLeast(): ReplaceExpectation;
-
-    public function counting(callable $consumer): ReplaceExpectation;
 }

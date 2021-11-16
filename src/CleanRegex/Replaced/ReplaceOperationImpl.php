@@ -13,9 +13,9 @@ class ReplaceOperationImpl implements ReplaceOperation
     /** @var ReplacerWithGroup */
     private $replacerWithGroup;
 
-    public function __construct(Definition $definition, Subject $subject, int $limit)
+    public function __construct(Definition $definition, Subject $subject, int $limit, Listener $listener)
     {
-        $this->replacerWith = new ReplacerWith($definition, $subject, $limit);
+        $this->replacerWith = new ReplacerWith($definition, $subject, $limit, $listener);
         $this->replacerCallback = new ReplacerCallback($definition, $subject, $limit);
         $this->replacerWithGroup = new ReplacerWithGroup($definition, $subject, $limit);
     }

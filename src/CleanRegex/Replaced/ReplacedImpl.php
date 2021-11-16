@@ -21,12 +21,12 @@ class ReplacedImpl implements Replaced
 
     public function all(): ReplaceOperation
     {
-        return new ReplaceOperationImpl($this->definition, $this->subject, -1);
+        return new ReplaceOperationImpl($this->definition, $this->subject, -1, new IgnoreListener());
     }
 
     public function first(): ReplaceOperation
     {
-        return new ReplaceOperationImpl($this->definition, $this->subject, 1);
+        return new ReplaceOperationImpl($this->definition, $this->subject, 1, new IgnoreListener());
     }
 
     public function only(int $amount): ReplaceOperation
@@ -34,12 +34,11 @@ class ReplacedImpl implements Replaced
         if ($amount < 0) {
             throw new \InvalidArgumentException("Negative limit: $amount");
         }
-        return new ReplaceOperationImpl($this->definition, $this->subject, $amount);
+        return new ReplaceOperationImpl($this->definition, $this->subject, $amount, new IgnoreListener());
     }
 
     public function exactly(): ReplaceExpectation
     {
-        // TODO: Implement exactly() method.
     }
 
     public function atMost(): ReplaceExpectation
@@ -49,12 +48,7 @@ class ReplacedImpl implements Replaced
 
     public function atLeast(): ReplaceExpectation
     {
-        // TODO: Implement atLeast() method.
-    }
-
-    public function counting(callable $consumer): ReplaceExpectation
-    {
-        // TODO: Implement counting() method.
+        return new ReplaceExpectationImpl($this->definition, $this->subject);
     }
 
     public function byMap(array $occurrencesAndReplacements): string
