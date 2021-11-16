@@ -1,18 +1,24 @@
 <?php
 namespace TRegx\CleanRegex\Replaced;
 
+use TRegx\CleanRegex\Internal\Definition;
+use TRegx\CleanRegex\Internal\Subject;
+
 class AtMostListenerFactory implements ListenerFactory
 {
-    /** @var OccurrencesAmount */
-    private $amount;
+    /** @var Definition */
+    private $definition;
+    /** @var Subject */
+    private $subject;
 
-    public function __construct(OccurrencesAmount $amount)
+    public function __construct(Definition $definition, Subject $subject)
     {
-        $this->amount = $amount;
+        $this->definition = $definition;
+        $this->subject = $subject;
     }
 
     public function create(int $limit): Listener
     {
-        return new AtMostListener($this->amount, $limit);
+        return new AtMostListener(new OccurrencesAmount($this->definition, $this->subject, $limit), $limit);
     }
 }

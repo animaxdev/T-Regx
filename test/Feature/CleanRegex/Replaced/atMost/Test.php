@@ -3,6 +3,8 @@ namespace Test\Feature\CleanRegex\Replaced\atMost;
 
 use PHPUnit\Framework\TestCase;
 use TRegx\CleanRegex\Exception\ReplacementExpectationFailedException;
+use TRegx\SafeRegex\Exception\CatastrophicBacktrackingException;
+use function pattern;
 
 /**
  * @coversNothing
@@ -81,5 +83,51 @@ class Test extends TestCase
 
         // when
         pattern('Foo')->replaced('Foo,Foo')->atMost()->first()->with('Bar');
+    }
+
+    /**
+     * @test
+     */
+    public function shouldThrowCatastrophicBacktracking_WhileCheckingLast()
+    {
+        // given
+        [$pattern, $subject] = $this->catastrophicBacktracking();
+
+        // then
+        $this->expectException(CatastrophicBacktrackingException::class);
+
+        // when
+        pattern($pattern)->replaced($subject)->atMost()->only(2)->with('Bar');
+    }
+
+    /**
+     * @test
+     */
+    public function shouldNotThrowCatastrophicBacktracking_WhileCheckingNextToLast()
+    {
+        // given
+        [$pattern, $subject] = $this->catastrophicBacktracking();
+
+        // then
+        $this->expectException(ReplacementExpectationFailedException::class);
+        $this->expectExceptionMessage('Expected to perform at most 1 replacement(s), but at least 2 replacement(s) would have been performed');
+
+        // when
+        pattern($pattern)->replaced($subject)->atMost()->first()->with('Bar');
+    }
+
+    /**
+     * @return string[]
+     */
+    private function catastrophicBacktracking(): array
+    {
+        /**
+         * This pattern and subject are deliberately created to
+         * produce {@see CatastrophicBacktrackingException}, if they
+         * are called more than once. That way, we can test
+         * whether "first" method really tries to search the first
+         * occurrence.
+         */
+        return ['(([a\d]+[a\d]+)+3)', '123 123 aaaaaaaaaaaaaaaaaaaa 3'];
     }
 }
