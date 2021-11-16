@@ -1,0 +1,21 @@
+<?php
+namespace TRegx\CleanRegex\Replaced;
+
+interface ReplaceOperation
+{
+    public function with(string $replacement): string;
+
+    public function withReferences(string $replacement): string;
+
+    public function callback(callable $replacer): string;
+
+    public function withGroup($nameOrIndex): string;
+
+    public function byMap(array $occurrencesAndReplacements): string;
+
+    public function withGroupOr($nameOrIndex): GroupReplacement;
+
+    public function byGroupMap($nameOrIndex, array $occurrencesAndReplacements): string;
+
+    public function byGroupMapOr($nameOrIndex, array $occurrencesAndReplacements): GroupReplacement;
+}

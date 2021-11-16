@@ -8,6 +8,8 @@ use TRegx\CleanRegex\Internal\Expression\Predefinition\Predefinition;
 use TRegx\CleanRegex\Internal\StringSubject;
 use TRegx\CleanRegex\Match\MatchPattern;
 use TRegx\CleanRegex\Replace\ReplaceLimit;
+use TRegx\CleanRegex\Replaced\Replaced;
+use TRegx\CleanRegex\Replaced\ReplacedImpl;
 use TRegx\SafeRegex\preg;
 
 class Pattern
@@ -40,6 +42,11 @@ class Pattern
     public function replace(string $subject): ReplaceLimit
     {
         return new ReplaceLimit($this->predefinition->definition(), new StringSubject($subject));
+    }
+
+    public function replaced(string $subject): Replaced
+    {
+        return new ReplacedImpl($this->predefinition->definition(), new StringSubject($subject));
     }
 
     public function prune(string $subject): string
