@@ -10,24 +10,23 @@ class ReplaceExpectationImpl implements ReplaceExpectation
     private $definition;
     /** @var Subject */
     private $subject;
-    /** @var ReplacerWith */
-    private $replacerWith;
-    /** @var ReplacerCallback */
-    private $replacerCallback;
+    /** @var ListenerFactory */
+    private $factory;
 
-    public function __construct(Definition $definition, Subject $subject)
+    public function __construct(Definition $definition, Subject $subject, ListenerFactory $factory)
     {
         $this->definition = $definition;
         $this->subject = $subject;
+        $this->factory = $factory;
     }
 
     public function first(): ReplaceOperation
     {
-        return new ReplaceOperationImpl($this->definition, $this->subject, 1, new AtLeastListener(1));
+        return new ReplaceOperationImpl($this->definition, $this->subject, 1, $this->factory->create(1));
     }
 
     public function only(int $amount): ReplaceOperation
     {
-        return new ReplaceOperationImpl($this->definition, $this->subject, $amount, new AtLeastListener($amount));
+        return new ReplaceOperationImpl($this->definition, $this->subject, $amount, $this->factory->create($amount));
     }
 }

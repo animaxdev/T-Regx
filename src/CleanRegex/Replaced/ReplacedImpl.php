@@ -43,12 +43,12 @@ class ReplacedImpl implements Replaced
 
     public function atMost(): ReplaceExpectation
     {
-        // TODO: Implement atMost() method.
+        return new ReplaceExpectationImpl($this->definition, $this->subject, new AtMostListenerFactory(new OccurrencesAmount($this->definition, $this->subject, -1)));
     }
 
     public function atLeast(): ReplaceExpectation
     {
-        return new ReplaceExpectationImpl($this->definition, $this->subject);
+        return new ReplaceExpectationImpl($this->definition, $this->subject, new AtLeastListenerFactory());
     }
 
     public function byMap(array $occurrencesAndReplacements): string
