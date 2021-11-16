@@ -1,8 +1,11 @@
 <?php
 namespace TRegx\CleanRegex\Replaced;
 
+use TRegx\CleanRegex\Exception\NonexistentGroupException;
 use TRegx\CleanRegex\Internal\Definition;
+use TRegx\CleanRegex\Internal\GroupKey\GroupKey;
 use TRegx\CleanRegex\Internal\Subject;
+use TRegx\SafeRegex\preg;
 
 class ReplacedImpl implements Replaced
 {
@@ -78,7 +81,20 @@ class ReplacedImpl implements Replaced
 
     public function withGroup($nameOrIndex): string
     {
-        // TODO: Implement withGroup() method.
+        $groupKey = GroupKey::of($nameOrIndex);
+        $result = preg::replace_callback($this->definition->pattern, function (array $matches) use ($groupKey, $nameOrIndex) {
+            if (\array_key_exists($nameOrIndex, $matches)) {
+                return $matches[$nameOrIndex];
+            }
+            throw new NonexistentGroupException($groupKey);
+        }, $this->subject->getSubject(), -1, $count);
+        if ($count === 0) {
+            preg_match_all($this->definition->pattern, '', $matches);
+            if (!\array_key_exists($nameOrIndex, $matches)) {
+                throw new NonexistentGroupException($groupKey);
+            }
+        }
+        return $result;
     }
 
     public function byMap(array $occurrencesAndReplacements): string
