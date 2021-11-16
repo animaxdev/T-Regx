@@ -1,11 +1,8 @@
 <?php
 namespace TRegx\CleanRegex\Replaced;
 
-use TRegx\CleanRegex\Exception\InvalidReplacementException;
 use TRegx\CleanRegex\Internal\Definition;
 use TRegx\CleanRegex\Internal\Subject;
-use TRegx\CleanRegex\Internal\Type\ValueType;
-use TRegx\SafeRegex\preg;
 
 class ReplacedImpl implements Replaced
 {
@@ -15,12 +12,15 @@ class ReplacedImpl implements Replaced
     private $subject;
     /** @var ReplacerWith */
     private $replacerWith;
+    /** @var ReplacerCallback */
+    private $replacerCallback;
 
     public function __construct(Definition $definition, Subject $subject)
     {
         $this->definition = $definition;
         $this->subject = $subject;
         $this->replacerWith = new ReplacerWith($definition, $subject, -1);
+        $this->replacerCallback = new ReplacerCallback($definition, $subject, -1);
     }
 
     public function all(): ReplaceOperation
@@ -73,13 +73,7 @@ class ReplacedImpl implements Replaced
 
     public function callback(callable $replacer): string
     {
-        return preg::replace_callback($this->definition->pattern, function (array $matches) use ($replacer): string {
-            $replacement = $replacer($matches[0]);
-            if (\is_string($replacement)) {
-                return $replacement;
-            }
-            throw new InvalidReplacementException(new ValueType($replacement));
-        }, $this->subject->getSubject());
+        return $this->replacerCallback->replace($replacer);
     }
 
     public function withGroup($nameOrIndex): string

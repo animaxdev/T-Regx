@@ -3,6 +3,7 @@ namespace Test\Feature\CleanRegex\Replaced\limits;
 
 use PHPUnit\Framework\TestCase;
 use Test\Utils\ExactExceptionMessage;
+use Test\Utils\Functions;
 use TRegx\Exception\MalformedPatternException;
 
 /**
@@ -39,6 +40,18 @@ class Test extends TestCase
     /**
      * @test
      */
+    public function all_callback()
+    {
+        // when
+        $replaced = pattern('\d+')->replaced('127.230.35.10')->all()->callback(Functions::charAt(0));
+
+        // then
+        $this->assertSame('1.2.3.1', $replaced);
+    }
+
+    /**
+     * @test
+     */
     public function first_with()
     {
         // when
@@ -58,6 +71,18 @@ class Test extends TestCase
 
         // then
         $this->assertSame('<127>.0.0.1', $replaced);
+    }
+
+    /**
+     * @test
+     */
+    public function first_callback()
+    {
+        // when
+        $replaced = pattern('\d+')->replaced('127.230.35.10')->first()->callback(Functions::charAt(0));
+
+        // then
+        $this->assertSame('1.230.35.10', $replaced);
     }
 
     /**
@@ -108,5 +133,17 @@ class Test extends TestCase
 
         // when
         pattern('?')->replaced('Foo')->only(0)->withReferences('Bar');
+    }
+
+    /**
+     * @test
+     */
+    public function only_callback()
+    {
+        // when
+        $replaced = pattern('\d+')->replaced('127.230.35.10')->only(2)->callback(Functions::charAt(0));
+
+        // then
+        $this->assertSame('1.2.35.10', $replaced);
     }
 }
