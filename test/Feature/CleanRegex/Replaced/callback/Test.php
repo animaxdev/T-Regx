@@ -4,6 +4,7 @@ namespace Test\Feature\CleanRegex\Replaced\callback;
 use PHPUnit\Framework\TestCase;
 use Test\Utils\Functions;
 use TRegx\CleanRegex\Exception\InvalidReplacementException;
+use TRegx\Exception\MalformedPatternException;
 
 /**
  * @coversNothing
@@ -33,5 +34,18 @@ class Test extends TestCase
 
         // when
         pattern('\w+')->replaced('Foo')->callback(Functions::constant([]));
+    }
+
+    /**
+     * @test
+     */
+    public function shouldCallMalformedPatternException()
+    {
+        // when
+        $this->expectException(MalformedPatternException::class);
+        $this->expectExceptionMessage('Quantifier does not follow a repeatable item at offset 0');
+
+        // when
+        pattern('?')->replaced('Bar')->callback(Functions::fail());
     }
 }
