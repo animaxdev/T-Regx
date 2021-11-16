@@ -144,7 +144,7 @@ class AbstractMatchPatternTest extends TestCase
          * produce {@see CatastrophicBacktrackingException}, if they
          * are called more than once. That way, we can test
          * whether "first" method really tries to search the first
-         * occurrance.
+         * occurrence.
          */
         return pattern("(([a\d]+[a\d]+)+3)")->match('  123 aaaaaaaaaaaaaaaaaaaa 3');
     }

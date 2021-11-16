@@ -3,6 +3,7 @@ namespace TRegx\CleanRegex\Replaced;
 
 use TRegx\CleanRegex\Internal\Definition;
 use TRegx\CleanRegex\Internal\Subject;
+use TRegx\SafeRegex\preg;
 
 class OccurrencesAmount
 {
@@ -22,7 +23,7 @@ class OccurrencesAmount
 
     public function count(): int
     {
-        \preg_replace($this->definition->pattern, '', $this->subject->getSubject(), -1, $realCount);
+        preg::replace($this->definition->pattern, '', $this->subject->getSubject(), $this->limit + 1, $realCount);
         return $realCount;
     }
 }
