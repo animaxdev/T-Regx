@@ -1,29 +1,23 @@
 <?php
 namespace TRegx\CleanRegex\Replaced;
 
-use TRegx\CleanRegex\Exception\NonexistentGroupException;
 use TRegx\CleanRegex\Internal\Definition;
-use TRegx\CleanRegex\Internal\GroupKey\GroupKey;
 use TRegx\CleanRegex\Internal\Subject;
-use TRegx\SafeRegex\preg;
 
 class ReplaceOperationImpl implements ReplaceOperation
 {
-    /** @var Definition */
-    private $definition;
-    /** @var Subject */
-    private $subject;
     /** @var ReplacerWith */
     private $replacerWith;
     /** @var ReplacerCallback */
     private $replacerCallback;
+    /** @var ReplacerWithGroup */
+    private $replacerWithGroup;
 
     public function __construct(Definition $definition, Subject $subject, int $limit)
     {
-        $this->definition = $definition;
-        $this->subject = $subject;
-        $this->replacerWith = new ReplacerWith($this->definition, $this->subject, $limit);
+        $this->replacerWith = new ReplacerWith($definition, $subject, $limit);
         $this->replacerCallback = new ReplacerCallback($definition, $subject, $limit);
+        $this->replacerWithGroup = new ReplacerWithGroup($definition, $subject, $limit);
     }
 
     public function with(string $replacement): string
@@ -43,20 +37,7 @@ class ReplaceOperationImpl implements ReplaceOperation
 
     public function withGroup($nameOrIndex): string
     {
-        $groupKey = GroupKey::of($nameOrIndex);
-        $result = preg::replace_callback($this->definition->pattern, function (array $matches) use ($groupKey, $nameOrIndex) {
-            if (\array_key_exists($nameOrIndex, $matches)) {
-                return $matches[$nameOrIndex];
-            }
-            throw new NonexistentGroupException($groupKey);
-        }, $this->subject->getSubject(), -1, $count);
-        if ($count === 0) {
-            preg_match_all($this->definition->pattern, '', $matches);
-            if (!\array_key_exists($nameOrIndex, $matches)) {
-                throw new NonexistentGroupException($groupKey);
-            }
-        }
-        return $result;
+        return $this->replacerWithGroup->replace($nameOrIndex);
     }
 
     public function byMap(array $occurrencesAndReplacements): string

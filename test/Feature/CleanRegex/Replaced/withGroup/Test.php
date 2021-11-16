@@ -3,6 +3,7 @@ namespace Test\Feature\CleanRegex\Replaced\withGroup;
 
 use PHPUnit\Framework\TestCase;
 use Test\Utils\ExactExceptionMessage;
+use TRegx\CleanRegex\Exception\GroupNotMatchedException;
 use TRegx\CleanRegex\Exception\NonexistentGroupException;
 use TRegx\Exception\MalformedPatternException;
 
@@ -150,5 +151,31 @@ class Test extends TestCase
 
         // when
         pattern(')')->replaced('Bar')->withGroup(2);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldThrow_ForUnmatchedGroup()
+    {
+        // then
+        $this->expectException(GroupNotMatchedException::class);
+        $this->expectExceptionMessage('Expected to replace with group #1, but the group was not matched');
+
+        // when
+        pattern('Foo(Bar)?')->replaced('Foo')->withGroup(1);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldThrow_ForUnmatchedGroupName()
+    {
+        // then
+        $this->expectException(GroupNotMatchedException::class);
+        $this->expectExceptionMessage("Expected to replace with group 'named', but the group was not matched");
+
+        // when
+        pattern('Foo(?<named>Bar)?')->replaced('Foo')->withGroup('named');
     }
 }

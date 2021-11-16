@@ -100,6 +100,18 @@ class Test extends TestCase
     /**
      * @test
      */
+    public function first_withGroup()
+    {
+        // when
+        $replaced = pattern('!(\d+)!')->replaced('!123! !345!')->first()->withGroup(1);
+
+        // then
+        $this->assertSame('123 !345!', $replaced);
+    }
+
+    /**
+     * @test
+     */
     public function shouldThrowForNegativeLimit()
     {
         // then
@@ -157,5 +169,17 @@ class Test extends TestCase
 
         // then
         $this->assertSame('1.2.35.10', $replaced);
+    }
+
+    /**
+     * @test
+     */
+    public function only_withGroup()
+    {
+        // when
+        $replaced = pattern('!(\d+)!')->replaced('!123!, !345!, !678!')->only(2)->withGroup(1);
+
+        // then
+        $this->assertSame('123, 345, !678!', $replaced);
     }
 }
