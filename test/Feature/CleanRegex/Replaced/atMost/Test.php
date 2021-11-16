@@ -2,15 +2,17 @@
 namespace Test\Feature\CleanRegex\Replaced\atMost;
 
 use PHPUnit\Framework\TestCase;
+use Test\Utils\CatastrophicBacktracking;
 use TRegx\CleanRegex\Exception\ReplacementExpectationFailedException;
 use TRegx\SafeRegex\Exception\CatastrophicBacktrackingException;
-use function pattern;
 
 /**
  * @coversNothing
  */
 class Test extends TestCase
 {
+    use CatastrophicBacktracking;
+
     /**
      * @test
      */
@@ -114,20 +116,5 @@ class Test extends TestCase
 
         // when
         pattern($pattern)->replaced($subject)->atMost()->first()->with('Bar');
-    }
-
-    /**
-     * @return string[]
-     */
-    private function catastrophicBacktracking(): array
-    {
-        /**
-         * This pattern and subject are deliberately created to
-         * produce {@see CatastrophicBacktrackingException}, if they
-         * are called more than once. That way, we can test
-         * whether "first" method really tries to search the first
-         * occurrence.
-         */
-        return ['(([a\d]+[a\d]+)+3)', '123 123 aaaaaaaaaaaaaaaaaaaa 3'];
     }
 }

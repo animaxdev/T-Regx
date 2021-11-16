@@ -39,6 +39,7 @@ class ReplacedImpl implements Replaced
 
     public function exactly(): ReplaceExpectation
     {
+        return new ReplaceExpectationImpl($this->definition, $this->subject, new ExactListenerFactory($this->definition, $this->subject));
     }
 
     public function atMost(): ReplaceExpectation
