@@ -5,13 +5,16 @@ use TRegx\CleanRegex\Internal\GroupKey\GroupKey;
 
 class ConstantString implements MissingGroupHandler
 {
+    /** @var string */
+    private $string;
 
-    public function __construct()
+    public function __construct(string $string)
     {
+        $this->string = $string;
     }
 
     public function handle(GroupKey $group, string $original): string
     {
-        return '';
+        return $this->string;
     }
 }
