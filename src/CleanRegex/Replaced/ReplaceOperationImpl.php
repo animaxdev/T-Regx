@@ -46,7 +46,12 @@ class ReplaceOperationImpl implements ReplaceOperation
 
     public function withGroup($nameOrIndex): string
     {
-        return $this->replacerWithGroup->replace($nameOrIndex);
+        return $this->replacerWithGroup->replace($nameOrIndex, new ThrowHandler());
+    }
+
+    public function withGroupOrIgnore($nameOrIndex): string
+    {
+        return $this->replacerWithGroup->replace($nameOrIndex, new IgnoreHandler());
     }
 
     public function byMap(array $occurrencesAndReplacements): string

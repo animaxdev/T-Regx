@@ -1,7 +1,6 @@
 <?php
 namespace TRegx\CleanRegex\Replaced;
 
-use TRegx\CleanRegex\Exception\GroupNotMatchedException;
 use TRegx\CleanRegex\Exception\NonexistentGroupException;
 use TRegx\CleanRegex\Internal\Definition;
 use TRegx\CleanRegex\Internal\GroupKey\GroupKey;
@@ -29,17 +28,22 @@ class ReplacerWithGroup
         $this->groupAware = new LightweightGroupAware($definition);
     }
 
-    public function replace($nameOrIndex): string
+    public function replace($nameOrIndex, MissingGroupHandler $handler): string
     {
-        $groupKey = GroupKey::of($nameOrIndex);
-        $result = preg::replace_callback($this->definition->pattern, function (array $matches) use ($groupKey, $nameOrIndex) {
+        return $this->replaceByGroup(GroupKey::of($nameOrIndex), $handler);
+    }
+
+    private function replaceByGroup(GroupKey $groupKey, MissingGroupHandler $handler): string
+    {
+        $nameOrIndex = $groupKey->nameOrIndex();
+        $result = preg::replace_callback($this->definition->pattern, function (array $matches) use ($handler, $groupKey, $nameOrIndex) {
             if (\array_key_exists($nameOrIndex, $matches)) {
                 return $matches[$nameOrIndex];
             }
-            if ($this->groupAware->hasGroup($nameOrIndex)) {
-                throw GroupNotMatchedException::forReplacement($groupKey);
+            if (!$this->groupAware->hasGroup($nameOrIndex)) {
+                throw new NonexistentGroupException($groupKey);
             }
-            throw new NonexistentGroupException($groupKey);
+            return $handler->handle($groupKey, $matches[0]);
         }, $this->subject->getSubject(), $this->limit, $count);
         if ($count === 0) {
             if (!$this->groupAware->hasGroup($nameOrIndex)) {
