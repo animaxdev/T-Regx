@@ -57,11 +57,6 @@ class ReplacedImpl implements Replaced
         // TODO: Implement withGroupOr() method.
     }
 
-    public function byGroupMap($nameOrIndex, array $occurrencesAndReplacements): string
-    {
-        // TODO: Implement byGroupMap() method.
-    }
-
     public function byGroupMapOr($nameOrIndex, array $occurrencesAndReplacements): GroupReplacement
     {
         // TODO: Implement byGroupMapOr() method.

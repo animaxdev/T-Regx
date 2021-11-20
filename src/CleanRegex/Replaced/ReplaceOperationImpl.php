@@ -2,6 +2,8 @@
 namespace TRegx\CleanRegex\Replaced;
 
 use TRegx\CleanRegex\Internal\Definition;
+use TRegx\CleanRegex\Internal\GroupKey\GroupKey;
+use TRegx\CleanRegex\Internal\GroupKey\WholeMatch;
 use TRegx\CleanRegex\Internal\Subject;
 
 class ReplaceOperationImpl implements ReplaceOperation
@@ -45,7 +47,7 @@ class ReplaceOperationImpl implements ReplaceOperation
 
     public function byMap(array $occurrencesAndReplacements): string
     {
-        return $this->replacerByMap->byMap($occurrencesAndReplacements);
+        return $this->replacerByMap->byMap(new WholeMatch(), $occurrencesAndReplacements);
     }
 
     public function withGroupOr($nameOrIndex): GroupReplacement
@@ -55,7 +57,7 @@ class ReplaceOperationImpl implements ReplaceOperation
 
     public function byGroupMap($nameOrIndex, array $occurrencesAndReplacements): string
     {
-        // TODO: Implement byGroupMap() method.
+        return $this->replacerByMap->byMap(GroupKey::of($nameOrIndex), $occurrencesAndReplacements);
     }
 
     public function byGroupMapOr($nameOrIndex, array $occurrencesAndReplacements): GroupReplacement
