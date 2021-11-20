@@ -76,6 +76,31 @@ class Test extends TestCase
     /**
      * @test
      */
+    public function all_byGroupMap()
+    {
+        // when
+        $replaced = pattern('Foo|Cat')->replaced('Foo,Cat,Foo')->all()->byGroupMap(0, ['Foo' => 'Bar', 'Cat' => 'Dog']);
+
+        // then
+        $this->assertSame('Bar,Dog,Bar', $replaced);
+    }
+
+    /**
+     * @test
+     */
+    public function all_shouldThrowForInvalidGroup()
+    {
+        // then
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Group name must be an alphanumeric string, not starting with a digit, but '0' given");
+
+        // when
+        pattern('Foo')->replaced('Foo')->all()->byGroupMap('0', []);
+    }
+
+    /**
+     * @test
+     */
     public function first_with()
     {
         // when
@@ -128,6 +153,18 @@ class Test extends TestCase
     {
         // when
         $replaced = pattern('Lorem')->replaced('Lorem,Lorem')->first()->byMap(['Lorem' => 'Ipsum']);
+
+        // then
+        $this->assertSame('Ipsum,Lorem', $replaced);
+    }
+
+    /**
+     * @test
+     */
+    public function first_byGroupMap()
+    {
+        // when
+        $replaced = pattern('Lorem')->replaced('Lorem,Lorem')->first()->byGroupMap(0, ['Lorem' => 'Ipsum']);
 
         // then
         $this->assertSame('Ipsum,Lorem', $replaced);
@@ -214,6 +251,18 @@ class Test extends TestCase
     {
         // when
         $replaced = pattern('Lorem')->replaced('Lorem,Lorem,Lorem')->only(2)->byMap(['Lorem' => 'Ipsum']);
+
+        // then
+        $this->assertSame('Ipsum,Ipsum,Lorem', $replaced);
+    }
+
+    /**
+     * @test
+     */
+    public function only_byMapGroup()
+    {
+        // when
+        $replaced = pattern('Lorem')->replaced('Lorem,Lorem,Lorem')->only(2)->byGroupMap(0, ['Lorem' => 'Ipsum']);
 
         // then
         $this->assertSame('Ipsum,Ipsum,Lorem', $replaced);

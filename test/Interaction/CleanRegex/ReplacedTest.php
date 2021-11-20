@@ -10,8 +10,6 @@ class ReplacedTest
      */
     public function should()
     {
-        $replace->first()->byGroupMap('group', ['from' => 'to']);
-
         $replace->first()->withGroupOr('group')->with('new');
         $replace->first()->withGroupOr('group')->empty();
         $replace->first()->withGroupOr('group')->ignore();
