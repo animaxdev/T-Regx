@@ -74,6 +74,11 @@ class ReplaceOperationImpl implements ReplaceOperation
         return $this->replacerByMap->replaced(new Replacements($occurrencesAndReplacements), new GroupMapReplacer($this->groupAware, GroupKey::of($nameOrIndex), new ConstantString('')));
     }
 
+    public function byGroupMapOrWith($nameOrIndex, array $occurrencesAndReplacements, string $substitute): string
+    {
+        return $this->replacerByMap->replaced(new Replacements($occurrencesAndReplacements), new GroupMapReplacer($this->groupAware, GroupKey::of($nameOrIndex), new ConstantString($substitute)));
+    }
+
     public function byGroupMapOr($nameOrIndex, array $occurrencesAndReplacements): GroupReplacement
     {
         // TODO: Implement byGroupMapOr() method.

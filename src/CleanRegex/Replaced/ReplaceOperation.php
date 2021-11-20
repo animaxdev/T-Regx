@@ -22,4 +22,6 @@ interface ReplaceOperation
     public function byGroupMapOrIgnore($nameOrIndex, array $occurrencesAndReplacements): string;
 
     public function byGroupMapOrEmpty($nameOrIndex, array $occurrencesAndReplacements): string;
+
+    public function byGroupMapOrWith($nameOrIndex, array $occurrencesAndReplacements, string $substitute): string;
 }
