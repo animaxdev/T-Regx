@@ -20,4 +20,6 @@ interface ReplaceOperation
     public function byGroupMapOr($nameOrIndex, array $occurrencesAndReplacements): GroupReplacement;
 
     public function byGroupMapOrIgnore($nameOrIndex, array $occurrencesAndReplacements): string;
+
+    public function byGroupMapOrEmpty($nameOrIndex, array $occurrencesAndReplacements): string;
 }
