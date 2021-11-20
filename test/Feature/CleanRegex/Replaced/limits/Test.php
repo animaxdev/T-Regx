@@ -64,6 +64,18 @@ class Test extends TestCase
     /**
      * @test
      */
+    public function all_byMap()
+    {
+        // when
+        $replaced = pattern('Foo|Cat')->replaced('Foo,Cat,Foo')->all()->byMap(['Foo' => 'Bar', 'Cat' => 'Dog']);
+
+        // then
+        $this->assertSame('Bar,Dog,Bar', $replaced);
+    }
+
+    /**
+     * @test
+     */
     public function first_with()
     {
         // when
@@ -107,6 +119,18 @@ class Test extends TestCase
 
         // then
         $this->assertSame('123 !345!', $replaced);
+    }
+
+    /**
+     * @test
+     */
+    public function first_byMap()
+    {
+        // when
+        $replaced = pattern('Lorem')->replaced('Lorem,Lorem')->first()->byMap(['Lorem' => 'Ipsum']);
+
+        // then
+        $this->assertSame('Ipsum,Lorem', $replaced);
     }
 
     /**
@@ -181,5 +205,17 @@ class Test extends TestCase
 
         // then
         $this->assertSame('123, 345, !678!', $replaced);
+    }
+
+    /**
+     * @test
+     */
+    public function only_byMap()
+    {
+        // when
+        $replaced = pattern('Lorem')->replaced('Lorem,Lorem,Lorem')->only(2)->byMap(['Lorem' => 'Ipsum']);
+
+        // then
+        $this->assertSame('Ipsum,Ipsum,Lorem', $replaced);
     }
 }

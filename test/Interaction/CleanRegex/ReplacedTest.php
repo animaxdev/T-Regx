@@ -10,10 +10,6 @@ class ReplacedTest
      */
     public function should()
     {
-        $replace->byMap(['from' => 'to']);
-        $replace->all()->byMap(['from' => 'to']);
-
-        $replace->first()->byMap(['from' => 'to']);
         $replace->first()->byGroupMap('group', ['from' => 'to']);
 
         $replace->first()->withGroupOr('group')->with('new');
@@ -23,8 +19,6 @@ class ReplacedTest
         $replace->first()->byGroupMapOr('group', ['from' => 'to'])->with('');
         $replace->first()->byGroupMapOr('group', ['from' => 'to'])->empty();
         $replace->first()->byGroupMapOr('group', ['from' => 'to'])->ignore();
-
-        $replace->only(2)->byMap(['from' => 'to']);
 
         // focus
         $replace->focus('asd')->withGroup('asd');
