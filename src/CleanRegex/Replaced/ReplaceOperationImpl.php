@@ -33,8 +33,8 @@ class ReplaceOperationImpl implements ReplaceOperation
     {
         $this->calledBack = new CalledBack($definition, $subject, $limit);
         $this->replacerWith = new ReplacerWith($definition, $subject, $limit, $listener);
-        $this->replacerCallback = new ReplacerCallback($this->calledBack);
         $this->groupAware = new LightweightGroupAware($definition);
+        $this->replacerCallback = new ReplacerCallback($this->calledBack, $this->groupAware, $definition, $subject, $limit);
         $this->replacerWithGroup = new ReplacerWithGroup($this->calledBack, $this->groupAware);
         $this->matchMapReplacer = new MatchMapReplacer($this->calledBack);
     }
