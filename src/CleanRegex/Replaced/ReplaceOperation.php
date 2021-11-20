@@ -13,6 +13,8 @@ interface ReplaceOperation
 
     public function withGroupOrIgnore($nameOrIndex): string;
 
+    public function withGroupOrEmpty($nameOrIndex): string;
+
     public function byMap(array $occurrencesAndReplacements): string;
 
     public function withGroupOr($nameOrIndex): GroupReplacement;

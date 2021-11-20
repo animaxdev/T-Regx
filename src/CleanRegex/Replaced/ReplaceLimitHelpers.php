@@ -30,6 +30,11 @@ trait ReplaceLimitHelpers
         return $this->all()->withGroupOrIgnore($nameOrIndex);
     }
 
+    public function withGroupOrEmpty($nameOrIndex): string
+    {
+        return $this->all()->withGroupOrEmpty($nameOrIndex);
+    }
+
     public function byMap(array $occurrencesAndReplacements): string
     {
         return $this->all()->byMap($occurrencesAndReplacements);
