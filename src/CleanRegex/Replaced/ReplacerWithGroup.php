@@ -7,6 +7,7 @@ use TRegx\CleanRegex\Internal\GroupKey\GroupKey;
 use TRegx\CleanRegex\Internal\Model\GroupAware;
 use TRegx\CleanRegex\Internal\Model\LightweightGroupAware;
 use TRegx\CleanRegex\Internal\Subject;
+use TRegx\CleanRegex\Replaced\ByMap\MissingGroupHandler;
 use TRegx\SafeRegex\preg;
 
 class ReplacerWithGroup

@@ -1,5 +1,5 @@
 <?php
-namespace TRegx\CleanRegex\Replaced;
+namespace TRegx\CleanRegex\Replaced\ByMap;
 
 use TRegx\CleanRegex\Internal\GroupKey\GroupKey;
 
