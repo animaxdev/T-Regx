@@ -69,6 +69,11 @@ class ReplaceOperationImpl implements ReplaceOperation
         return $this->replacerWithGroup->replace($nameOrIndex, new ConstantString(''));
     }
 
+    public function withGroupOrWith($nameOrIndex, string $substitute): string
+    {
+        return $this->replacerWithGroup->replace($nameOrIndex, new ConstantString($substitute));
+    }
+
     public function byMap(array $occurrencesAndReplacements): string
     {
         return $this->matchMapReplacer->replaced(new Replacements($occurrencesAndReplacements));
