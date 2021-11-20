@@ -3,7 +3,8 @@ namespace TRegx\CleanRegex\Replaced;
 
 use TRegx\CleanRegex\Internal\Definition;
 use TRegx\CleanRegex\Internal\GroupKey\GroupKey;
-use TRegx\CleanRegex\Internal\GroupKey\WholeMatch;
+use TRegx\CleanRegex\Internal\Model\GroupAware;
+use TRegx\CleanRegex\Internal\Model\LightweightGroupAware;
 use TRegx\CleanRegex\Internal\Subject;
 
 class ReplaceOperationImpl implements ReplaceOperation
@@ -16,6 +17,8 @@ class ReplaceOperationImpl implements ReplaceOperation
     private $replacerWithGroup;
     /** @var ReplacerByMap */
     private $replacerByMap;
+    /** @var GroupAware */
+    private $groupAware;
 
     public function __construct(Definition $definition, Subject $subject, int $limit, Listener $listener)
     {
@@ -23,6 +26,7 @@ class ReplaceOperationImpl implements ReplaceOperation
         $this->replacerCallback = new ReplacerCallback($definition, $subject, $limit);
         $this->replacerWithGroup = new ReplacerWithGroup($definition, $subject, $limit);
         $this->replacerByMap = new ReplacerByMap($definition, $subject, $limit);
+        $this->groupAware = new LightweightGroupAware($definition);
     }
 
     public function with(string $replacement): string
@@ -47,7 +51,7 @@ class ReplaceOperationImpl implements ReplaceOperation
 
     public function byMap(array $occurrencesAndReplacements): string
     {
-        return $this->replacerByMap->byMap(new WholeMatch(), $occurrencesAndReplacements, new InternalThrowHandler());
+        return $this->replacerByMap->replaced(new Replacements($occurrencesAndReplacements), new MatchMapReplacer());
     }
 
     public function withGroupOr($nameOrIndex): GroupReplacement
@@ -57,12 +61,12 @@ class ReplaceOperationImpl implements ReplaceOperation
 
     public function byGroupMap($nameOrIndex, array $occurrencesAndReplacements): string
     {
-        return $this->replacerByMap->byMap(GroupKey::of($nameOrIndex), $occurrencesAndReplacements, new ThrowHandler());
+        return $this->replacerByMap->replaced(new Replacements($occurrencesAndReplacements), new GroupMapReplacer($this->groupAware, GroupKey::of($nameOrIndex), new ThrowHandler()));
     }
 
     public function byGroupMapOrIgnore($nameOrIndex, array $occurrencesAndReplacements): string
     {
-        return $this->replacerByMap->byMap(GroupKey::of($nameOrIndex), $occurrencesAndReplacements, new IgnoreHandler());
+        return $this->replacerByMap->replaced(new Replacements($occurrencesAndReplacements), new GroupMapReplacer($this->groupAware, GroupKey::of($nameOrIndex), new IgnoreHandler()));
     }
 
     public function byGroupMapOr($nameOrIndex, array $occurrencesAndReplacements): GroupReplacement
