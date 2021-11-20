@@ -34,11 +34,11 @@ class ReplacerByMap
         $this->groupAware = new LightweightGroupAware($this->definition);
     }
 
-    public function byMap(GroupKey $group, array $replacements): string
+    public function byMap(GroupKey $group, array $replacements, MissingGroupHandler $handler): string
     {
         $this->validate($replacements);
-        $result = preg::replace_callback($this->definition->pattern, function (array $matches) use ($group, $replacements): string {
-            return $this->replaceGroup($group, $matches, $replacements);
+        $result = preg::replace_callback($this->definition->pattern, function (array $matches) use ($handler, $group, $replacements): string {
+            return $this->replaceGroup($group, $matches, $replacements, $handler);
         }, $this->subject->getSubject(), $this->limit, $count);
         if ($count === 0) {
             if (!$this->groupAware->hasGroup($group->nameOrIndex())) {
@@ -48,11 +48,11 @@ class ReplacerByMap
         return $result;
     }
 
-    private function replaceGroup(GroupKey $group, array $matches, array $replacements): string
+    private function replaceGroup(GroupKey $group, array $matches, array $replacements, MissingGroupHandler $handler): string
     {
         if (!\array_key_exists($group->nameOrIndex(), $matches)) {
             if ($this->groupAware->hasGroup($group->nameOrIndex())) {
-                throw GroupNotMatchedException::forReplacement($group);
+                return $handler->handle($group, $matches[0]);
             }
             throw new NonexistentGroupException($group);
         }

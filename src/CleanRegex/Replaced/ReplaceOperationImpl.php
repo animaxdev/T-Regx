@@ -47,7 +47,7 @@ class ReplaceOperationImpl implements ReplaceOperation
 
     public function byMap(array $occurrencesAndReplacements): string
     {
-        return $this->replacerByMap->byMap(new WholeMatch(), $occurrencesAndReplacements);
+        return $this->replacerByMap->byMap(new WholeMatch(), $occurrencesAndReplacements, new InternalThrowHandler());
     }
 
     public function withGroupOr($nameOrIndex): GroupReplacement
@@ -57,7 +57,12 @@ class ReplaceOperationImpl implements ReplaceOperation
 
     public function byGroupMap($nameOrIndex, array $occurrencesAndReplacements): string
     {
-        return $this->replacerByMap->byMap(GroupKey::of($nameOrIndex), $occurrencesAndReplacements);
+        return $this->replacerByMap->byMap(GroupKey::of($nameOrIndex), $occurrencesAndReplacements, new ThrowHandler());
+    }
+
+    public function byGroupMapOrIgnore($nameOrIndex, array $occurrencesAndReplacements): string
+    {
+        return $this->replacerByMap->byMap(GroupKey::of($nameOrIndex), $occurrencesAndReplacements, new IgnoreHandler());
     }
 
     public function byGroupMapOr($nameOrIndex, array $occurrencesAndReplacements): GroupReplacement
