@@ -5,7 +5,7 @@ use TRegx\CleanRegex\Internal\Definition;
 use TRegx\CleanRegex\Internal\Subject;
 use TRegx\SafeRegex\preg;
 
-class ReplacerByMap
+class CalledBack
 {
     /** @var Definition */
     private $definition;
@@ -21,13 +21,14 @@ class ReplacerByMap
         $this->limit = $limit;
     }
 
-    public function replaced(Replacements $replacements, MapReplacer $mapReplacer): string
+    public function replaced(callable $callback): string
     {
-        return preg::replace_callback($this->definition->pattern,
-            function (array $matches) use ($mapReplacer, $replacements): string {
-                return $mapReplacer->replaceGroup($replacements, $matches);
-            },
-            $this->subject->getSubject(),
-            $this->limit);
+        return preg::replace_callback($this->definition->pattern, $callback, $this->subject->getSubject(), $this->limit);
+    }
+
+    public function replacedAndCounted(callable $callback): array
+    {
+        $replaced = preg::replace_callback($this->definition->pattern, $callback, $this->subject->getSubject(), $this->limit, $counted);
+        return [$replaced, $counted];
     }
 }

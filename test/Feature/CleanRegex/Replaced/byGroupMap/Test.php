@@ -137,7 +137,6 @@ class Test extends TestCase
      */
     public function shouldThrow_onNonExistingGroup_OnUnmatchedSubject()
     {
-        $this->markTestSkipped();
         // then
         $this->expectException(NonexistentGroupException::class);
         $this->expectExceptionMessage("Nonexistent group: 'unit'");
