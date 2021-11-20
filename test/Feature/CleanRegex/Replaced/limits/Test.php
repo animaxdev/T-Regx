@@ -88,6 +88,18 @@ class Test extends TestCase
     /**
      * @test
      */
+    public function byGroupMapOrIgnore()
+    {
+        // when
+        $replaced = pattern(':(Foo|Cat)?')->replaced(':Foo,:,:Foo')->all()->byGroupMapOrWith(1, ['Foo' => 'Bar', 'Cat' => 'Dog'], 'New');
+
+        // then
+        $this->assertSame('Bar,New,Bar', $replaced);
+    }
+
+    /**
+     * @test
+     */
     public function all_shouldThrowForInvalidGroup()
     {
         // then
@@ -168,6 +180,18 @@ class Test extends TestCase
 
         // then
         $this->assertSame('Ipsum,Lorem', $replaced);
+    }
+
+    /**
+     * @test
+     */
+    public function first_byGroupMapOrIgnore()
+    {
+        // when
+        $replaced = pattern('Cat(Bar)?')->replaced('Cat')->all()->byGroupMapOrWith(1, [], 'New');
+
+        // then
+        $this->assertSame('New', $replaced);
     }
 
     /**
@@ -267,4 +291,17 @@ class Test extends TestCase
         // then
         $this->assertSame('Ipsum,Ipsum,Lorem', $replaced);
     }
+
+    /**
+     * @test
+     */
+    public function only2_byGroupMapOrIgnore()
+    {
+        // when
+        $replaced = pattern(':(Foo|Cat)?')->replaced(':Foo,:,:Foo')->only(2)->byGroupMapOrWith(1, ['Foo' => 'Bar', 'Cat' => 'Dog'], 'New');
+
+        // then
+        $this->assertSame('Bar,New,:Foo', $replaced);
+    }
+
 }
