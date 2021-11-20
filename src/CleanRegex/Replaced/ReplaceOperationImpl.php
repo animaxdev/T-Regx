@@ -6,6 +6,13 @@ use TRegx\CleanRegex\Internal\GroupKey\GroupKey;
 use TRegx\CleanRegex\Internal\Model\GroupAware;
 use TRegx\CleanRegex\Internal\Model\LightweightGroupAware;
 use TRegx\CleanRegex\Internal\Subject;
+use TRegx\CleanRegex\Replaced\ByMap\ConstantString;
+use TRegx\CleanRegex\Replaced\ByMap\GroupMapReplacer;
+use TRegx\CleanRegex\Replaced\ByMap\IgnoreHandler;
+use TRegx\CleanRegex\Replaced\ByMap\MatchMapReplacer;
+use TRegx\CleanRegex\Replaced\ByMap\MissingGroupHandler;
+use TRegx\CleanRegex\Replaced\ByMap\Replacements;
+use TRegx\CleanRegex\Replaced\ByMap\ThrowHandler;
 
 class ReplaceOperationImpl implements ReplaceOperation
 {

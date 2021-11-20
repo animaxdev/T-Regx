@@ -1,7 +1,8 @@
 <?php
-namespace TRegx\CleanRegex\Replaced;
+namespace TRegx\CleanRegex\Replaced\ByMap;
 
 use TRegx\CleanRegex\Internal\Message\Replace\Map\ForMatchMessage;
+use TRegx\CleanRegex\Replaced\CalledBack;
 
 class MatchMapReplacer
 {

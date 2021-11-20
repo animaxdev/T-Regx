@@ -1,11 +1,12 @@
 <?php
-namespace TRegx\CleanRegex\Replaced;
+namespace TRegx\CleanRegex\Replaced\ByMap;
 
 use TRegx\CleanRegex\Exception\GroupNotMatchedException;
 use TRegx\CleanRegex\Exception\NonexistentGroupException;
 use TRegx\CleanRegex\Internal\GroupKey\GroupKey;
 use TRegx\CleanRegex\Internal\Message\Replace\Map\ForGroupMessage;
 use TRegx\CleanRegex\Internal\Model\GroupAware;
+use TRegx\CleanRegex\Replaced\CalledBack;
 
 class GroupMapReplacer
 {
