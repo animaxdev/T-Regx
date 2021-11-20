@@ -12,12 +12,15 @@ class ReplaceOperationImpl implements ReplaceOperation
     private $replacerCallback;
     /** @var ReplacerWithGroup */
     private $replacerWithGroup;
+    /** @var ReplacerByMap */
+    private $replacerByMap;
 
     public function __construct(Definition $definition, Subject $subject, int $limit, Listener $listener)
     {
         $this->replacerWith = new ReplacerWith($definition, $subject, $limit, $listener);
         $this->replacerCallback = new ReplacerCallback($definition, $subject, $limit);
         $this->replacerWithGroup = new ReplacerWithGroup($definition, $subject, $limit);
+        $this->replacerByMap = new ReplacerByMap($definition, $subject, $limit);
     }
 
     public function with(string $replacement): string
@@ -42,7 +45,7 @@ class ReplaceOperationImpl implements ReplaceOperation
 
     public function byMap(array $occurrencesAndReplacements): string
     {
-        // TODO: Implement byMap() method.
+        return $this->replacerByMap->byMap($occurrencesAndReplacements);
     }
 
     public function withGroupOr($nameOrIndex): GroupReplacement

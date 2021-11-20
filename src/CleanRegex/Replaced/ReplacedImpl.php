@@ -52,11 +52,6 @@ class ReplacedImpl implements Replaced
         return new ReplaceExpectationImpl($this->definition, $this->subject, new AtLeastListenerFactory());
     }
 
-    public function byMap(array $occurrencesAndReplacements): string
-    {
-        // TODO: Implement byMap() method.
-    }
-
     public function withGroupOr($nameOrIndex): GroupReplacement
     {
         // TODO: Implement withGroupOr() method.
