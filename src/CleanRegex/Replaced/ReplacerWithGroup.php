@@ -2,55 +2,48 @@
 namespace TRegx\CleanRegex\Replaced;
 
 use TRegx\CleanRegex\Exception\NonexistentGroupException;
-use TRegx\CleanRegex\Internal\Definition;
 use TRegx\CleanRegex\Internal\GroupKey\GroupKey;
 use TRegx\CleanRegex\Internal\Model\GroupAware;
-use TRegx\CleanRegex\Internal\Model\LightweightGroupAware;
-use TRegx\CleanRegex\Internal\Subject;
 use TRegx\CleanRegex\Replaced\ByMap\MissingGroupHandler;
-use TRegx\SafeRegex\preg;
 
 class ReplacerWithGroup
 {
-    /** @var Definition */
-    private $definition;
-    /** @var Subject */
-    private $subject;
-    /** @var int */
-    private $limit;
+    /** @var CalledBack */
+    private $calledBack;
     /** @var GroupAware */
     private $groupAware;
 
-    public function __construct(Definition $definition, Subject $subject, int $limit)
+    public function __construct(CalledBack $calledBack, GroupAware $groupAware)
     {
-        $this->definition = $definition;
-        $this->subject = $subject;
-        $this->limit = $limit;
-        $this->groupAware = new LightweightGroupAware($definition);
+        $this->calledBack = $calledBack;
+        $this->groupAware = $groupAware;
     }
 
-    public function replace($nameOrIndex, MissingGroupHandler $handler): string
+    public function replaced(GroupKey $group, MissingGroupHandler $handler): string
     {
-        return $this->replaceByGroup(GroupKey::of($nameOrIndex), $handler);
-    }
-
-    private function replaceByGroup(GroupKey $groupKey, MissingGroupHandler $handler): string
-    {
-        $nameOrIndex = $groupKey->nameOrIndex();
-        $result = preg::replace_callback($this->definition->pattern, function (array $matches) use ($handler, $groupKey, $nameOrIndex) {
-            if (\array_key_exists($nameOrIndex, $matches)) {
-                return $matches[$nameOrIndex];
-            }
-            if (!$this->groupAware->hasGroup($nameOrIndex)) {
-                throw new NonexistentGroupException($groupKey);
-            }
-            return $handler->handle($groupKey, $matches[0]);
-        }, $this->subject->getSubject(), $this->limit, $count);
-        if ($count === 0) {
-            if (!$this->groupAware->hasGroup($nameOrIndex)) {
-                throw new NonexistentGroupException($groupKey);
-            }
+        [$replaced, $count] = $this->calledBack->replacedAndCounted(function (array $matches) use ($group, $handler) {
+            return $this->replaceWithGroup($matches, $group, $handler);
+        });
+        if ($count === 0 && !$this->groupExists($group)) {
+            throw new NonexistentGroupException($group);
         }
-        return $result;
+        return $replaced;
+    }
+
+    private function replaceWithGroup(array $matches, GroupKey $group, MissingGroupHandler $handler): string
+    {
+        $nameOrIndex = $group->nameOrIndex();
+        if (\array_key_exists($nameOrIndex, $matches)) {
+            return $matches[$nameOrIndex];
+        }
+        if ($this->groupExists($group)) {
+            return $handler->handle($group, $matches[0]);
+        }
+        throw new NonexistentGroupException($group);
+    }
+
+    private function groupExists(GroupKey $groupKey): bool
+    {
+        return $this->groupAware->hasGroup($groupKey->nameOrIndex());
     }
 }

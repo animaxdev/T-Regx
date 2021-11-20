@@ -31,11 +31,11 @@ class ReplaceOperationImpl implements ReplaceOperation
 
     public function __construct(Definition $definition, Subject $subject, int $limit, Listener $listener)
     {
-        $this->replacerWith = new ReplacerWith($definition, $subject, $limit, $listener);
-        $this->replacerCallback = new ReplacerCallback($definition, $subject, $limit);
-        $this->replacerWithGroup = new ReplacerWithGroup($definition, $subject, $limit);
-        $this->groupAware = new LightweightGroupAware($definition);
         $this->calledBack = new CalledBack($definition, $subject, $limit);
+        $this->replacerWith = new ReplacerWith($definition, $subject, $limit, $listener);
+        $this->replacerCallback = new ReplacerCallback($this->calledBack);
+        $this->groupAware = new LightweightGroupAware($definition);
+        $this->replacerWithGroup = new ReplacerWithGroup($this->calledBack, $this->groupAware);
         $this->matchMapReplacer = new MatchMapReplacer($this->calledBack);
     }
 
@@ -51,27 +51,27 @@ class ReplaceOperationImpl implements ReplaceOperation
 
     public function callback(callable $replacer): string
     {
-        return $this->replacerCallback->replace($replacer);
+        return $this->replacerCallback->replaced(new ReplacementFunction($replacer));
     }
 
     public function withGroup($nameOrIndex): string
     {
-        return $this->replacerWithGroup->replace($nameOrIndex, new ThrowHandler());
+        return $this->replacerWithGroup->replaced(GroupKey::of($nameOrIndex), (new ThrowHandler()));
     }
 
     public function withGroupOrIgnore($nameOrIndex): string
     {
-        return $this->replacerWithGroup->replace($nameOrIndex, new IgnoreHandler());
+        return $this->replacerWithGroup->replaced(GroupKey::of($nameOrIndex), (new IgnoreHandler()));
     }
 
     public function withGroupOrEmpty($nameOrIndex): string
     {
-        return $this->replacerWithGroup->replace($nameOrIndex, new ConstantString(''));
+        return $this->replacerWithGroup->replaced(GroupKey::of($nameOrIndex), (new ConstantString('')));
     }
 
     public function withGroupOrWith($nameOrIndex, string $substitute): string
     {
-        return $this->replacerWithGroup->replace($nameOrIndex, new ConstantString($substitute));
+        return $this->replacerWithGroup->replaced(GroupKey::of($nameOrIndex), (new ConstantString($substitute)));
     }
 
     public function byMap(array $occurrencesAndReplacements): string
