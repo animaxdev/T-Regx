@@ -34,6 +34,9 @@ use TRegx\CleanRegex\Internal\SubjectEmptyOptional;
 use TRegx\CleanRegex\Match\Details\Detail;
 use TRegx\CleanRegex\Match\Details\MatchDetail;
 
+/**
+ * TODO, join with MatchPattern
+ */
 abstract class AbstractMatchPattern implements \Countable, \IteratorAggregate
 {
     use MatchPatternHelpers;
