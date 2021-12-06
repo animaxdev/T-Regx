@@ -73,7 +73,8 @@ class ReplaceDetail implements Detail
 
     public function hasGroup($nameOrIndex): bool
     {
-        // TODO: Implement hasGroup() method.
+        GroupKey::of($nameOrIndex);
+        return $this->groupAware->hasGroup($nameOrIndex);
     }
 
     public function text(): string
