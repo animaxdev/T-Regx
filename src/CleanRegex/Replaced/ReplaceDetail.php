@@ -4,6 +4,7 @@ namespace TRegx\CleanRegex\Replaced;
 use TRegx\CleanRegex\Exception\GroupNotMatchedException;
 use TRegx\CleanRegex\Exception\IntegerFormatException;
 use TRegx\CleanRegex\Exception\IntegerOverflowException;
+use TRegx\CleanRegex\Exception\NonexistentGroupException;
 use TRegx\CleanRegex\Internal\GroupKey\GroupKey;
 use TRegx\CleanRegex\Internal\Model\GroupAware;
 use TRegx\CleanRegex\Internal\Number\Base;
@@ -59,7 +60,7 @@ class ReplaceDetail implements Detail
 
     public function groupsCount(): int
     {
-        return count(\array_filter($this->groupAware->getGroupKeys(), 'is_int')) - 1;
+        return \count(\array_filter($this->groupAware->getGroupKeys(), 'is_int')) - 1;
     }
 
     public function hasGroup($nameOrIndex): bool
@@ -122,7 +123,10 @@ class ReplaceDetail implements Detail
         if (\array_key_exists($nameOrIndex, $this->match)) {
             return $this->match[$nameOrIndex];
         }
-        throw GroupNotMatchedException::forGet(GroupKey::of($nameOrIndex));
+        if ($this->groupAware->hasGroup($nameOrIndex)) {
+            throw GroupNotMatchedException::forGet(GroupKey::of($nameOrIndex));
+        }
+        throw new NonexistentGroupException(GroupKey::of($nameOrIndex));
     }
 
     public function group($nameOrIndex)

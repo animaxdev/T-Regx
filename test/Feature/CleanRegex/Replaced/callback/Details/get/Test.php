@@ -56,4 +56,33 @@ class Test extends TestCase
                 return $detail->get('domain');
             });
     }
+
+    /**
+     * @test
+     */
+    public function shouldThrowForInvalidGroup()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Group name must be an alphanumeric string, not starting with a digit, but '2group' given");
+
+        // when
+        pattern('Foo')->replace('Foo')->first()->callback(function (Detail $detail) {
+            return $detail->get('2group');
+        });
+    }
+
+    /**
+     * @test
+     */
+    public function shouldGetLastGroup()
+    {
+        // when
+        pattern('Bar(Foo)?')->replaced('BarFoo')->first()->callback(function (Detail $detail) {
+            // then
+            $this->assertSame('Foo', $detail->get(1));
+
+            // clean
+            return '';
+        });
+    }
 }
