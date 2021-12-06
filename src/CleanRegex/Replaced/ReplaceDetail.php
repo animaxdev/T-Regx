@@ -97,7 +97,14 @@ class ReplaceDetail implements Detail
 
     public function isInt(int $base = null): bool
     {
-        // TODO: Implement isInt() method.
+        $number = new StringNumber($this->text());
+        $theBase = new Base($base);
+        try {
+            $number->asInt($theBase);
+        } catch (NumberFormatException | NumberOverflowException $exception) {
+            return false;
+        }
+        return true;
     }
 
     public function index(): int
