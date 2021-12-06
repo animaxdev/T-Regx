@@ -6,6 +6,7 @@ use TRegx\CleanRegex\Exception\IntegerFormatException;
 use TRegx\CleanRegex\Exception\IntegerOverflowException;
 use TRegx\CleanRegex\Exception\NonexistentGroupException;
 use TRegx\CleanRegex\Internal\GroupKey\GroupKey;
+use TRegx\CleanRegex\Internal\GroupNames;
 use TRegx\CleanRegex\Internal\Model\GroupAware;
 use TRegx\CleanRegex\Internal\Number\Base;
 use TRegx\CleanRegex\Internal\Number\NumberFormatException;
@@ -32,6 +33,8 @@ class ReplaceDetail implements Detail
     private $limit;
     /** @var ByteOffset */
     private $byteOffset;
+    /** @var GroupNames */
+    private $groupNames;
 
     public function __construct(Subject    $subject,
                                 GroupAware $groupAware,
@@ -46,6 +49,7 @@ class ReplaceDetail implements Detail
         $this->index = $index;
         $this->limit = $limit;
         $this->byteOffset = new ByteOffset($offset);
+        $this->groupNames = new GroupNames($groupAware);
     }
 
     public function subject(): string
@@ -55,7 +59,7 @@ class ReplaceDetail implements Detail
 
     public function groupNames(): array
     {
-        // TODO: Implement groupNames() method.
+        return $this->groupNames->groupNames();
     }
 
     public function groupsCount(): int
