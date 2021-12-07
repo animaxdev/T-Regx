@@ -33,19 +33,32 @@ class ReplacerCallback
         $counter = 0;
         $matches = $this->analyzedSubject();
         return $this->calledBack->replaced(function (array $match) use ($matches, $function, &$counter): string {
-            [$text, $offset] = $matches[$counter];
+            $offset = $matches[0][$counter][1];
+            $analyzed = $this->shifted($matches, $counter);
             return $function->apply(new ReplaceDetail($this->subject,
                 $this->groupAware,
                 $match,
                 $counter++,
                 $this->limit,
-                $offset));
+                $offset,
+                $analyzed
+            ));
         });
+    }
+
+    private function shifted(array $arrays, int $key): array
+    {
+        return \array_map(static function (array $array) use ($key): array {
+            if ($array[$key] === '') {
+                return [null, -1];
+            }
+            return $array[$key];
+        }, $arrays);
     }
 
     private function analyzedSubject(): array
     {
         preg::match_all($this->definition->pattern, $this->subject->getSubject(), $matches, \PREG_OFFSET_CAPTURE);
-        return $matches[0];
+        return $matches;
     }
 }

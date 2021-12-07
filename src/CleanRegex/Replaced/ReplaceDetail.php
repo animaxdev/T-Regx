@@ -8,6 +8,7 @@ use TRegx\CleanRegex\Exception\NonexistentGroupException;
 use TRegx\CleanRegex\Internal\GroupKey\GroupKey;
 use TRegx\CleanRegex\Internal\GroupNames;
 use TRegx\CleanRegex\Internal\Match\Details\GroupsCount;
+use TRegx\CleanRegex\Internal\Match\Details\MatchedGroup;
 use TRegx\CleanRegex\Internal\Model\GroupAware;
 use TRegx\CleanRegex\Internal\Number\Base;
 use TRegx\CleanRegex\Internal\Number\NumberFormatException;
@@ -38,13 +39,16 @@ class ReplaceDetail implements Detail
     private $groupNames;
     /** @var GroupsCount */
     private $groupsCount;
+    /** @var MatchedGroup */
+    private $matchedGroup;
 
     public function __construct(Subject    $subject,
                                 GroupAware $groupAware,
                                 array      $match,
                                 int        $index,
                                 int        $limit,
-                                int        $offset)
+                                int        $offset,
+                                array      $matches)
     {
         $this->subject = $subject;
         $this->groupAware = $groupAware;
@@ -54,6 +58,7 @@ class ReplaceDetail implements Detail
         $this->byteOffset = new ByteOffset($offset);
         $this->groupNames = new GroupNames($groupAware);
         $this->groupsCount = new GroupsCount($groupAware);
+        $this->matchedGroup = new MatchedGroup($match, $matches);
     }
 
     public function subject(): string
@@ -160,7 +165,7 @@ class ReplaceDetail implements Detail
 
     public function matched($nameOrIndex): bool
     {
-        // TODO: Implement matched() method.
+        return $this->matchedGroup->matched(GroupKey::of($nameOrIndex));
     }
 
     public function all(): array
