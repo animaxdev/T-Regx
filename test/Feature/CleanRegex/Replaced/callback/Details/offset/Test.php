@@ -31,4 +31,30 @@ class Test extends TestCase
         $this->assertSame([6, 14], $offsets);
         $this->assertSame([14, 22], $byteOffsets);
     }
+
+    /**
+     * @test
+     */
+    public function shouldGetTail()
+    {
+        // given
+        $tails = [];
+        $byteTails = [];
+
+        // when
+        pattern('(Tomeł|Kamil)')
+            ->replaced('€€€€, Tomeł i Kamil')
+            ->callback(function (Detail $detail) use (&$tails, &$byteTails) {
+                // when
+                $tails[] = $detail->tail();
+                $byteTails[] = $detail->byteTail();
+
+                // clean
+                return '';
+            });
+
+        // then
+        $this->assertSame([11, 19], $tails);
+        $this->assertSame([20, 28], $byteTails);
+    }
 }
