@@ -35,6 +35,8 @@ class ReplaceDetail implements Detail
     private $limit;
     /** @var ByteOffset */
     private $byteOffset;
+    /** @var ByteOffset */
+    private $byteTail;
     /** @var GroupNames */
     private $groupNames;
     /** @var GroupsCount */
@@ -56,6 +58,7 @@ class ReplaceDetail implements Detail
         $this->index = $index;
         $this->limit = $limit;
         $this->byteOffset = new ByteOffset($offset);
+        $this->byteTail = new ByteOffset($offset + \strLen($match[0]));
         $this->groupNames = new GroupNames($groupAware);
         $this->groupsCount = new GroupsCount($groupAware);
         $this->matchedGroup = new MatchedGroup($match, $matches);
@@ -180,7 +183,7 @@ class ReplaceDetail implements Detail
 
     public function tail(): int
     {
-        // TODO: Implement tail() method.
+        return $this->byteTail->characters($this->subject->getSubject());
     }
 
     public function byteOffset(): int
@@ -190,7 +193,7 @@ class ReplaceDetail implements Detail
 
     public function byteTail(): int
     {
-        // TODO: Implement byteTail() method.
+        return $this->byteTail->bytes();
     }
 
     public function setUserData($userData): void
