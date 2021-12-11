@@ -16,8 +16,8 @@ class Test extends TestCase
         $byteOffsets = [];
 
         // when
-        pattern('(Tomek|Kamil)')
-            ->replaced('€€€€, Tomek i Kamil')
+        pattern('(Tome|Kamy)k')
+            ->replaced('€€€€, Tomek i Kamyk')
             ->callback(function (Detail $detail) use (&$offsets, &$byteOffsets) {
                 // when
                 $offsets[] = $detail->offset();
@@ -42,8 +42,8 @@ class Test extends TestCase
         $byteTails = [];
 
         // when
-        pattern('(Tomeł|Kamil)')
-            ->replaced('€€€€, Tomeł i Kamil')
+        pattern('(Tońe|Kamy)k')
+            ->replaced('€€€€, Tońek i Kamyk')
             ->callback(function (Detail $detail) use (&$tails, &$byteTails) {
                 // when
                 $tails[] = $detail->tail();
@@ -56,5 +56,31 @@ class Test extends TestCase
         // then
         $this->assertSame([11, 19], $tails);
         $this->assertSame([20, 28], $byteTails);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldGetLength()
+    {
+        // given
+        $lengths = [];
+        $byteLengths = [];
+
+        // when
+        pattern('(Tońe|Kamy)k')
+            ->replaced('€€€€, Tońek i Kamyk')
+            ->callback(function (Detail $detail) use (&$lengths, &$byteLengths) {
+                // when
+                $byteLengths[] = $detail->textByteLength();
+                $lengths[] = $detail->textLength();
+
+                // clean
+                return '';
+            });
+
+        // then
+        $this->assertSame([6, 5], $byteLengths);
+        $this->assertSame([5, 5], $lengths);
     }
 }
