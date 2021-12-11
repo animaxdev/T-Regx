@@ -1,10 +1,8 @@
 <?php
 namespace TRegx\CleanRegex\Replaced;
 
-use TRegx\CleanRegex\Exception\GroupNotMatchedException;
 use TRegx\CleanRegex\Exception\IntegerFormatException;
 use TRegx\CleanRegex\Exception\IntegerOverflowException;
-use TRegx\CleanRegex\Exception\NonexistentGroupException;
 use TRegx\CleanRegex\Internal\GroupKey\GroupKey;
 use TRegx\CleanRegex\Internal\GroupNames;
 use TRegx\CleanRegex\Internal\Match\Details\GroupsCount;
@@ -58,7 +56,7 @@ class ReplaceDetail implements Detail
         $this->coords = new SubjectCoordinates(new ReplaceEntry($match[0], $offset), $subject);
         $this->groupNames = new GroupNames($groupAware);
         $this->groupsCount = new GroupsCount($groupAware);
-        $this->matchedGroup = new MatchedGroup($match, $matches);
+        $this->matchedGroup = new MatchedGroup($groupAware, $match, $matches);
     }
 
     public function subject(): string
@@ -116,7 +114,7 @@ class ReplaceDetail implements Detail
         $theBase = new Base($base);
         try {
             $number->asInt($theBase);
-        } catch (NumberFormatException|NumberOverflowException $exception) {
+        } catch (NumberFormatException | NumberOverflowException $exception) {
             return false;
         }
         return true;
@@ -134,13 +132,7 @@ class ReplaceDetail implements Detail
 
     public function get($nameOrIndex): string
     {
-        if (\array_key_exists($nameOrIndex, $this->match)) {
-            return $this->match[$nameOrIndex];
-        }
-        if ($this->groupAware->hasGroup($nameOrIndex)) {
-            throw GroupNotMatchedException::forGet(GroupKey::of($nameOrIndex));
-        }
-        throw new NonexistentGroupException(GroupKey::of($nameOrIndex));
+        return $this->matchedGroup->get(GroupKey::of($nameOrIndex));
     }
 
     public function group($nameOrIndex)
