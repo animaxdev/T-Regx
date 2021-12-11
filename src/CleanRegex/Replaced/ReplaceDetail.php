@@ -14,7 +14,7 @@ use TRegx\CleanRegex\Internal\Number\Base;
 use TRegx\CleanRegex\Internal\Number\NumberFormatException;
 use TRegx\CleanRegex\Internal\Number\NumberOverflowException;
 use TRegx\CleanRegex\Internal\Number\StringNumber;
-use TRegx\CleanRegex\Internal\Offset\ByteOffset;
+use TRegx\CleanRegex\Internal\Offset\SubjectCoordinates;
 use TRegx\CleanRegex\Internal\Subject;
 use TRegx\CleanRegex\Match\Details\Detail;
 use TRegx\CleanRegex\Match\Details\DuplicateName;
@@ -33,16 +33,14 @@ class ReplaceDetail implements Detail
     private $index;
     /** @var int */
     private $limit;
-    /** @var ByteOffset */
-    private $byteOffset;
-    /** @var ByteOffset */
-    private $byteTail;
     /** @var GroupNames */
     private $groupNames;
     /** @var GroupsCount */
     private $groupsCount;
     /** @var MatchedGroup */
     private $matchedGroup;
+    /** @var SubjectCoordinates */
+    private $coords;
 
     public function __construct(Subject    $subject,
                                 GroupAware $groupAware,
@@ -57,8 +55,7 @@ class ReplaceDetail implements Detail
         $this->match = $match;
         $this->index = $index;
         $this->limit = $limit;
-        $this->byteOffset = new ByteOffset($offset);
-        $this->byteTail = new ByteOffset($offset + \strLen($match[0]));
+        $this->coords = new SubjectCoordinates(new ReplaceEntry($match[0], $offset), $subject);
         $this->groupNames = new GroupNames($groupAware);
         $this->groupsCount = new GroupsCount($groupAware);
         $this->matchedGroup = new MatchedGroup($match, $matches);
@@ -92,12 +89,12 @@ class ReplaceDetail implements Detail
 
     public function textLength(): int
     {
-        // TODO: Implement textLength() method.
+        return $this->coords->characterLength();
     }
 
     public function textByteLength(): int
     {
-        // TODO: Implement textByteLength() method.
+        return $this->coords->byteLength();
     }
 
     public function toInt(int $base = null): int
@@ -119,7 +116,7 @@ class ReplaceDetail implements Detail
         $theBase = new Base($base);
         try {
             $number->asInt($theBase);
-        } catch (NumberFormatException | NumberOverflowException $exception) {
+        } catch (NumberFormatException|NumberOverflowException $exception) {
             return false;
         }
         return true;
@@ -178,22 +175,22 @@ class ReplaceDetail implements Detail
 
     public function offset(): int
     {
-        return $this->byteOffset->characters($this->subject->getSubject());
+        return $this->coords->characterOffset();
     }
 
     public function tail(): int
     {
-        return $this->byteTail->characters($this->subject->getSubject());
+        return $this->coords->characterTail();
     }
 
     public function byteOffset(): int
     {
-        return $this->byteOffset->bytes();
+        return $this->coords->byteOffset();
     }
 
     public function byteTail(): int
     {
-        return $this->byteTail->bytes();
+        return $this->coords->byteTail();
     }
 
     public function setUserData($userData): void
