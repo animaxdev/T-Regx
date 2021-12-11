@@ -39,6 +39,8 @@ class ReplaceDetail implements Detail
     private $matchedGroup;
     /** @var SubjectCoordinates */
     private $coords;
+    /** @var UserData */
+    private $userData;
 
     public function __construct(Subject    $subject,
                                 GroupAware $groupAware,
@@ -57,6 +59,7 @@ class ReplaceDetail implements Detail
         $this->groupNames = new GroupNames($groupAware);
         $this->groupsCount = new GroupsCount($groupAware);
         $this->matchedGroup = new MatchedGroup($groupAware, $match, $matches);
+        $this->userData = new UserData();
     }
 
     public function subject(): string
@@ -114,7 +117,7 @@ class ReplaceDetail implements Detail
         $theBase = new Base($base);
         try {
             $number->asInt($theBase);
-        } catch (NumberFormatException | NumberOverflowException $exception) {
+        } catch (NumberFormatException|NumberOverflowException $exception) {
             return false;
         }
         return true;
@@ -187,12 +190,12 @@ class ReplaceDetail implements Detail
 
     public function setUserData($userData): void
     {
-        // TODO: Implement setUserData() method.
+        $this->userData->set($userData);
     }
 
     public function getUserData()
     {
-        // TODO: Implement getUserData() method.
+        return $this->userData->get();
     }
 
     public function __toString(): string
