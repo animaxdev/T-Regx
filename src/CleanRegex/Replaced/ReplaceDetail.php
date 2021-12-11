@@ -41,6 +41,8 @@ class ReplaceDetail implements Detail
     private $coords;
     /** @var UserData */
     private $userData;
+    /** @var AllOcurrences */
+    private $ocurrences;
 
     public function __construct(Subject    $subject,
                                 GroupAware $groupAware,
@@ -48,7 +50,8 @@ class ReplaceDetail implements Detail
                                 int        $index,
                                 int        $limit,
                                 int        $offset,
-                                array      $matches)
+                                array      $matches,
+                                array      $allMatches)
     {
         $this->subject = $subject;
         $this->groupAware = $groupAware;
@@ -60,6 +63,7 @@ class ReplaceDetail implements Detail
         $this->groupsCount = new GroupsCount($groupAware);
         $this->matchedGroup = new MatchedGroup($groupAware, $match, $matches);
         $this->userData = new UserData();
+        $this->ocurrences = new AllOcurrences($allMatches);
     }
 
     public function subject(): string
@@ -165,7 +169,7 @@ class ReplaceDetail implements Detail
 
     public function all(): array
     {
-        // TODO: Implement all() method.
+        return $this->ocurrences->all();
     }
 
     public function offset(): int

@@ -41,7 +41,8 @@ class ReplacerCallback
                 $counter++,
                 $this->limit,
                 $offset,
-                $analyzed
+                $analyzed,
+                $matches
             ));
         });
     }
