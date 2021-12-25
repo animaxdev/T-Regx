@@ -69,8 +69,8 @@ class ReplaceDetail implements Detail
         $this->matchedGroup = $constituent->group();
         $this->userData = new UserData();
         $this->occurrences = $occurrences;
-        $this->indexedGroups = new IndexedGroups($groupAware, $constituent->compo(), $subject);
-        $this->namedGroups = new NamedGroups($groupAware, $constituent->compo(), $subject);
+        $this->indexedGroups = new IndexedGroups($groupAware, $constituent->groupEntries(), $subject);
+        $this->namedGroups = new NamedGroups($groupAware, $constituent->groupEntries(), $subject);
     }
 
     public function subject(): string

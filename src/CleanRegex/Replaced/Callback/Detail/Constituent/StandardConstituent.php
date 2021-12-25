@@ -33,7 +33,7 @@ class StandardConstituent implements Constituent
         return $this->text;
     }
 
-    public function compo(): GroupEntries
+    public function groupEntries(): GroupEntries
     {
         return $this->entries;
     }

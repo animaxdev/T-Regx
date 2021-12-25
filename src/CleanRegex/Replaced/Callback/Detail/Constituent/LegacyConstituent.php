@@ -16,15 +16,15 @@ class LegacyConstituent implements Constituent
     /** @var LegacyGroup */
     private $group;
     /** @var LegacyEntries */
-    private $compo;
+    private $entries;
     /** @var Entry */
     private $entry;
 
-    public function __construct(GroupAware $groupAware, MatchAware $aware, LegacyModel $model, GroupEntries $composite, ByteOffset $byteOffset)
+    public function __construct(GroupAware $groupAware, MatchAware $aware, LegacyModel $model, GroupEntries $entries, ByteOffset $byteOffset)
     {
         $this->text = $model->text();
         $this->group = new LegacyGroup($groupAware, $aware, $model);
-        $this->compo = new LegacyEntries($groupAware, $model, $composite);
+        $this->entries = new LegacyEntries($groupAware, $model, $entries);
         $this->entry = new ReplaceEntry($this->text, $byteOffset);
     }
 
@@ -33,9 +33,9 @@ class LegacyConstituent implements Constituent
         return $this->text;
     }
 
-    public function compo(): GroupEntries
+    public function groupEntries(): GroupEntries
     {
-        return $this->compo;
+        return $this->entries;
     }
 
     public function group(): Group

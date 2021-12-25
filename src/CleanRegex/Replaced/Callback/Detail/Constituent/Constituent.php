@@ -13,5 +13,5 @@ interface Constituent
 
     public function group(): Group;
 
-    public function compo(): GroupEntries;
+    public function groupEntries(): GroupEntries;
 }
