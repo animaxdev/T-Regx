@@ -11,25 +11,25 @@ class LegacyEntries implements GroupEntries
     /** @var LegacyModel */
     private $model;
     /** @var GroupEntries */
-    private $groups;
+    private $entries;
 
-    public function __construct(GroupAware $groupAware, LegacyModel $model, GroupEntries $groups)
+    public function __construct(GroupAware $groupAware, LegacyModel $model, GroupEntries $entries)
     {
         $this->groupAware = $groupAware;
         $this->model = $model;
-        $this->groups = $groups;
+        $this->entries = $entries;
     }
 
     public function groupTexts(): array
     {
         if ($this->model->potentiallyTrimmed($this->groupAware)) {
-            return $this->groups->groupTexts();
+            return $this->entries->groupTexts();
         }
         return $this->model->texts();
     }
 
     public function groupOffsets(): array
     {
-        return $this->groups->groupOffsets();
+        return $this->entries->groupOffsets();
     }
 }

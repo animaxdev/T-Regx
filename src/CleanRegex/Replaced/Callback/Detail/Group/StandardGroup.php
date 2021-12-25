@@ -6,7 +6,7 @@ use TRegx\CleanRegex\Exception\NonexistentGroupException;
 use TRegx\CleanRegex\Internal\GroupKey\GroupKey;
 use TRegx\CleanRegex\Internal\Model\GroupHasAware;
 use TRegx\CleanRegex\Replaced\Callback\Detail\Constituent\StandardModel;
-use TRegx\CleanRegex\Replaced\Callback\Detail\SmartMatchAware;
+use TRegx\CleanRegex\Replaced\Callback\Detail\MatchAware;
 
 class StandardGroup implements Group
 {
@@ -14,10 +14,10 @@ class StandardGroup implements Group
     private $aware;
     /** @var StandardModel */
     private $model;
-    /** @var SmartMatchAware */
+    /** @var MatchAware */
     private $matchAware;
 
-    public function __construct(GroupHasAware $aware, StandardModel $model, SmartMatchAware $matchAware)
+    public function __construct(GroupHasAware $aware, StandardModel $model, MatchAware $matchAware)
     {
         $this->aware = $aware;
         $this->model = $model;

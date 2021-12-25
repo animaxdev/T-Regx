@@ -3,7 +3,7 @@ namespace TRegx\CleanRegex\Replaced\Preg;
 
 use TRegx\CleanRegex\Internal\GroupKey\GroupKey;
 
-class MatchAware
+class IndexedMatchAware
 {
     /** @var Analyzed */
     private $analyzed;

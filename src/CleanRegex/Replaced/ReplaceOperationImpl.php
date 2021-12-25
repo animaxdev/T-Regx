@@ -11,18 +11,18 @@ use TRegx\CleanRegex\Replaced\Callback\ReplacementsCallback;
 use TRegx\CleanRegex\Replaced\Callback\ReplacePlan;
 use TRegx\CleanRegex\Replaced\Callback\ReplacerCallback;
 use TRegx\CleanRegex\Replaced\Expectation\Listener;
-use TRegx\CleanRegex\Replaced\Group\AutoMatchAware;
 use TRegx\CleanRegex\Replaced\Group\ByMapGroupOperation;
 use TRegx\CleanRegex\Replaced\Group\ConstantString;
 use TRegx\CleanRegex\Replaced\Group\IdentityOperation;
 use TRegx\CleanRegex\Replaced\Group\IgnoreHandler;
 use TRegx\CleanRegex\Replaced\Group\MissingGroupHandler;
 use TRegx\CleanRegex\Replaced\Group\ReplacerWithGroup;
+use TRegx\CleanRegex\Replaced\Group\SequenceMatchAware;
 use TRegx\CleanRegex\Replaced\Group\ThrowHandler;
 use TRegx\CleanRegex\Replaced\Preg\AllOccurrences;
 use TRegx\CleanRegex\Replaced\Preg\Analyzed;
 use TRegx\CleanRegex\Replaced\Preg\Fetcher;
-use TRegx\CleanRegex\Replaced\Preg\MatchAware;
+use TRegx\CleanRegex\Replaced\Preg\IndexedMatchAware;
 use TRegx\CleanRegex\Replaced\Preg\TextCalled;
 
 class ReplaceOperationImpl implements ReplaceOperation
@@ -41,10 +41,10 @@ class ReplaceOperationImpl implements ReplaceOperation
         $this->replacerWith = new ReplacerWith($definition, $subject, $limit, $listener);
         $groupAware = new LightweightGroupAware($definition);
         $analyzed = new Analyzed($definition, $subject);
-        $matchAware = new MatchAware($analyzed);
+        $matchAware = new IndexedMatchAware($analyzed);
         $this->replacerCallback = new ReplacerCallback($groupAware, $subject, $limit, new AllOccurrences($analyzed),
             new ReplacePlan($definition, $subject, $limit, new Constituents($groupAware, $matchAware, new Fetcher($analyzed))));
-        $this->groupReplace = new ReplacerWithGroup($definition, $subject, $limit, $groupAware, new AutoMatchAware($matchAware));
+        $this->groupReplace = new ReplacerWithGroup($definition, $subject, $limit, $groupAware, new SequenceMatchAware($matchAware));
         $this->textCalled = new TextCalled($definition, $subject, $limit);
     }
 

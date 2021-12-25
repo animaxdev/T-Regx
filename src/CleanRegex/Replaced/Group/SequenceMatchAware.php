@@ -2,16 +2,16 @@
 namespace TRegx\CleanRegex\Replaced\Group;
 
 use TRegx\CleanRegex\Internal\GroupKey\GroupKey;
-use TRegx\CleanRegex\Replaced\Preg\MatchAware;
+use TRegx\CleanRegex\Replaced\Preg\IndexedMatchAware;
 
-class AutoMatchAware
+class SequenceMatchAware
 {
-    /** @var MatchAware */
+    /** @var IndexedMatchAware */
     private $matchAware;
     /** @var int */
     private $index;
 
-    public function __construct(MatchAware $matchAware)
+    public function __construct(IndexedMatchAware $matchAware)
     {
         $this->matchAware = $matchAware;
         $this->index = 0;

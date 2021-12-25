@@ -18,14 +18,14 @@ class ReplacerWithGroup
     private $limit;
     /** @var GroupAware */
     private $groupAware;
-    /** @var AutoMatchAware */
+    /** @var SequenceMatchAware */
     private $matchAware;
 
-    public function __construct(Definition     $definition,
-                                Subject        $subject,
-                                int            $limit,
-                                GroupAware     $groupAware,
-                                AutoMatchAware $matchAware)
+    public function __construct(Definition         $definition,
+                                Subject            $subject,
+                                int                $limit,
+                                GroupAware         $groupAware,
+                                SequenceMatchAware $matchAware)
     {
         $this->definition = $definition;
         $this->subject = $subject;

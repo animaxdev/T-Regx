@@ -6,7 +6,7 @@ use TRegx\CleanRegex\Internal\Model\Match\Entry;
 use TRegx\CleanRegex\Internal\Model\Match\GroupEntries;
 use TRegx\CleanRegex\Replaced\Callback\Detail\Group\Group;
 use TRegx\CleanRegex\Replaced\Callback\Detail\Group\StandardGroup;
-use TRegx\CleanRegex\Replaced\Callback\Detail\SmartMatchAware;
+use TRegx\CleanRegex\Replaced\Callback\Detail\MatchAware;
 use TRegx\CleanRegex\Replaced\ConstantEntry;
 
 class StandardConstituent implements Constituent
@@ -20,7 +20,7 @@ class StandardConstituent implements Constituent
     /** @var Entry */
     private $entry;
 
-    public function __construct(GroupHasAware $groupAware, SmartMatchAware $matchAware, StandardModel $model)
+    public function __construct(GroupHasAware $groupAware, MatchAware $matchAware, StandardModel $model)
     {
         $this->text = $model->text();
         $this->entries = $model->groupEntries();

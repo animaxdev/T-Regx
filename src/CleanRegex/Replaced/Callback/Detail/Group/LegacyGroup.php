@@ -6,18 +6,18 @@ use TRegx\CleanRegex\Exception\NonexistentGroupException;
 use TRegx\CleanRegex\Internal\GroupKey\GroupKey;
 use TRegx\CleanRegex\Internal\Model\GroupHasAware;
 use TRegx\CleanRegex\Replaced\Callback\Detail\Constituent\LegacyModel;
-use TRegx\CleanRegex\Replaced\Callback\Detail\SmartMatchAware;
+use TRegx\CleanRegex\Replaced\Callback\Detail\MatchAware;
 
 class LegacyGroup implements Group
 {
     /** @var GroupHasAware */
     private $aware;
-    /** @var SmartMatchAware */
+    /** @var MatchAware */
     private $matchAware;
     /** @var LegacyModel */
     private $model;
 
-    public function __construct(GroupHasAware $aware, SmartMatchAware $matchAware, LegacyModel $model)
+    public function __construct(GroupHasAware $aware, MatchAware $matchAware, LegacyModel $model)
     {
         $this->aware = $aware;
         $this->matchAware = $matchAware;
