@@ -3,16 +3,27 @@ namespace TRegx\CleanRegex\Replaced;
 
 use TRegx\CleanRegex\Internal\Definition;
 use TRegx\CleanRegex\Internal\GroupKey\GroupKey;
-use TRegx\CleanRegex\Internal\Model\GroupAware;
 use TRegx\CleanRegex\Internal\Model\LightweightGroupAware;
 use TRegx\CleanRegex\Internal\Subject;
-use TRegx\CleanRegex\Replaced\ByMap\ConstantString;
-use TRegx\CleanRegex\Replaced\ByMap\GroupMapReplacer;
-use TRegx\CleanRegex\Replaced\ByMap\IgnoreHandler;
-use TRegx\CleanRegex\Replaced\ByMap\MatchMapReplacer;
-use TRegx\CleanRegex\Replaced\ByMap\MissingGroupHandler;
-use TRegx\CleanRegex\Replaced\ByMap\Replacements;
-use TRegx\CleanRegex\Replaced\ByMap\ThrowHandler;
+use TRegx\CleanRegex\Replaced\Callback\Detail\Constituent\Constituents;
+use TRegx\CleanRegex\Replaced\Callback\ReplaceFunction;
+use TRegx\CleanRegex\Replaced\Callback\ReplacementsCallback;
+use TRegx\CleanRegex\Replaced\Callback\ReplacePlan;
+use TRegx\CleanRegex\Replaced\Callback\ReplacerCallback;
+use TRegx\CleanRegex\Replaced\Expectation\Listener;
+use TRegx\CleanRegex\Replaced\Group\AutoMatchAware;
+use TRegx\CleanRegex\Replaced\Group\ByMapGroupOperation;
+use TRegx\CleanRegex\Replaced\Group\ConstantString;
+use TRegx\CleanRegex\Replaced\Group\IdentityOperation;
+use TRegx\CleanRegex\Replaced\Group\IgnoreHandler;
+use TRegx\CleanRegex\Replaced\Group\MissingGroupHandler;
+use TRegx\CleanRegex\Replaced\Group\ReplacerWithGroup;
+use TRegx\CleanRegex\Replaced\Group\ThrowHandler;
+use TRegx\CleanRegex\Replaced\Preg\AllOccurrences;
+use TRegx\CleanRegex\Replaced\Preg\Analyzed;
+use TRegx\CleanRegex\Replaced\Preg\Fetcher;
+use TRegx\CleanRegex\Replaced\Preg\MatchAware;
+use TRegx\CleanRegex\Replaced\Preg\TextCalled;
 
 class ReplaceOperationImpl implements ReplaceOperation
 {
@@ -21,22 +32,20 @@ class ReplaceOperationImpl implements ReplaceOperation
     /** @var ReplacerCallback */
     private $replacerCallback;
     /** @var ReplacerWithGroup */
-    private $replacerWithGroup;
-    /** @var GroupAware */
-    private $groupAware;
-    /** @var CalledBack */
-    private $calledBack;
-    /** @var MatchMapReplacer */
-    private $matchMapReplacer;
+    private $groupReplace;
+    /** @var TextCalled */
+    private $textCalled;
 
     public function __construct(Definition $definition, Subject $subject, int $limit, Listener $listener)
     {
-        $this->calledBack = new CalledBack($definition, $subject, $limit);
         $this->replacerWith = new ReplacerWith($definition, $subject, $limit, $listener);
-        $this->groupAware = new LightweightGroupAware($definition);
-        $this->replacerCallback = new ReplacerCallback($this->calledBack, $this->groupAware, $definition, $subject, $limit);
-        $this->replacerWithGroup = new ReplacerWithGroup($this->calledBack, $this->groupAware);
-        $this->matchMapReplacer = new MatchMapReplacer($this->calledBack);
+        $groupAware = new LightweightGroupAware($definition);
+        $analyzed = new Analyzed($definition, $subject);
+        $matchAware = new MatchAware($analyzed);
+        $this->replacerCallback = new ReplacerCallback($groupAware, $subject, $limit, new AllOccurrences($analyzed),
+            new ReplacePlan($definition, $subject, $limit, new Constituents($groupAware, $matchAware, new Fetcher($analyzed))));
+        $this->groupReplace = new ReplacerWithGroup($definition, $subject, $limit, $groupAware, new AutoMatchAware($matchAware));
+        $this->textCalled = new TextCalled($definition, $subject, $limit);
     }
 
     public function with(string $replacement): string
@@ -51,66 +60,61 @@ class ReplaceOperationImpl implements ReplaceOperation
 
     public function callback(callable $replacer): string
     {
-        return $this->replacerCallback->replaced(new ReplacementFunction($replacer));
+        return $this->replacerCallback->replaced(new ReplaceFunction($replacer));
     }
 
     public function withGroup($nameOrIndex): string
     {
-        return $this->replacerWithGroup->replaced(GroupKey::of($nameOrIndex), (new ThrowHandler()));
+        return $this->replaceByGroup(GroupKey::of($nameOrIndex), new ThrowHandler());
     }
 
     public function withGroupOrIgnore($nameOrIndex): string
     {
-        return $this->replacerWithGroup->replaced(GroupKey::of($nameOrIndex), (new IgnoreHandler()));
+        return $this->replaceByGroup(GroupKey::of($nameOrIndex), new IgnoreHandler());
     }
 
     public function withGroupOrEmpty($nameOrIndex): string
     {
-        return $this->replacerWithGroup->replaced(GroupKey::of($nameOrIndex), (new ConstantString('')));
+        return $this->replaceByGroup(GroupKey::of($nameOrIndex), new ConstantString(''));
     }
 
     public function withGroupOrWith($nameOrIndex, string $substitute): string
     {
-        return $this->replacerWithGroup->replaced(GroupKey::of($nameOrIndex), (new ConstantString($substitute)));
+        return $this->replaceByGroup(GroupKey::of($nameOrIndex), new ConstantString($substitute));
+    }
+
+    private function replaceByGroup(GroupKey $group, MissingGroupHandler $handler): string
+    {
+        return $this->groupReplace->replaced($group, $handler, new IdentityOperation());
     }
 
     public function byMap(array $occurrencesAndReplacements): string
     {
-        return $this->matchMapReplacer->replaced(new Replacements($occurrencesAndReplacements));
-    }
-
-    public function withGroupOr($nameOrIndex): GroupReplacement
-    {
-        // TODO: Implement withGroupOr() method.
+        return $this->textCalled->replaced(new ReplacementsCallback(new Replacements($occurrencesAndReplacements)));
     }
 
     public function byGroupMap($nameOrIndex, array $occurrencesAndReplacements): string
     {
-        return $this->byGroupMapOrHandled(GroupKey::of($nameOrIndex), new Replacements($occurrencesAndReplacements), new ThrowHandler());
+        return $this->replaceByGroupMap(GroupKey::of($nameOrIndex), new Replacements($occurrencesAndReplacements), new ThrowHandler());
     }
 
     public function byGroupMapOrIgnore($nameOrIndex, array $occurrencesAndReplacements): string
     {
-        return $this->byGroupMapOrHandled(GroupKey::of($nameOrIndex), new Replacements($occurrencesAndReplacements), new IgnoreHandler());
+        return $this->replaceByGroupMap(GroupKey::of($nameOrIndex), new Replacements($occurrencesAndReplacements), new IgnoreHandler());
     }
 
     public function byGroupMapOrEmpty($nameOrIndex, array $occurrencesAndReplacements): string
     {
-        return $this->byGroupMapOrHandled(GroupKey::of($nameOrIndex), new Replacements($occurrencesAndReplacements), new ConstantString(''));
+        return $this->replaceByGroupMap(GroupKey::of($nameOrIndex), new Replacements($occurrencesAndReplacements), new ConstantString(''));
     }
 
     public function byGroupMapOrWith($nameOrIndex, array $occurrencesAndReplacements, string $substitute): string
     {
-        return $this->byGroupMapOrHandled(GroupKey::of($nameOrIndex), new Replacements($occurrencesAndReplacements), new ConstantString($substitute));
+        return $this->replaceByGroupMap(GroupKey::of($nameOrIndex), new Replacements($occurrencesAndReplacements), new ConstantString($substitute));
     }
 
-    private function byGroupMapOrHandled(GroupKey $group, Replacements $replacements, MissingGroupHandler $handler): string
+    private function replaceByGroupMap(GroupKey $group, Replacements $replacements, MissingGroupHandler $handler): string
     {
-        return (new GroupMapReplacer($this->calledBack, $this->groupAware, $handler, $group))->replaced($replacements);
-    }
-
-    public function byGroupMapOr($nameOrIndex, array $occurrencesAndReplacements): GroupReplacement
-    {
-        // TODO: Implement byGroupMapOr() method.
+        return $this->groupReplace->replaced($group, $handler, new ByMapGroupOperation($replacements, $group));
     }
 }

@@ -191,6 +191,18 @@ class Test extends TestCase
     /**
      * @test
      */
+    public function shouldReplaceWithEmptyOccurrence()
+    {
+        // when
+        $result = pattern('Foo()Cat')->replaced('"FooCat"')->byGroupMap(1, ['' => 'Bar']);
+
+        // then
+        $this->assertSame('"Bar"', $result);
+    }
+
+    /**
+     * @test
+     */
     public function shouldThrow_groupNotMatch_lastGroup()
     {
         // then
@@ -227,6 +239,19 @@ class Test extends TestCase
 
         // when
         pattern('(?<capital>F)our')->replaced('Four')->byGroupMap(1, ['O' => '1']);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldThrow_onMissingReplacementsKey_Empty()
+    {
+        // then
+        $this->expectException(MissingReplacementKeyException::class);
+        $this->expectExceptionMessage("Expected to replace value 'FooCar' by group #1 (''), but such key is not found in replacement map");
+
+        // when
+        pattern('Foo()Car')->replaced('FooCar')->byGroupMap(1, []);
     }
 
     /**

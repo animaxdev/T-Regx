@@ -178,4 +178,17 @@ class Test extends TestCase
         // when
         pattern('Foo(?<named>Bar)?')->replaced('Foo')->withGroup('named');
     }
+
+    /**
+     * @test
+     */
+    public function shouldThrow_ForUnmatchedGroup_Middle()
+    {
+        // then
+        $this->expectException(GroupNotMatchedException::class);
+        $this->expectExceptionMessage('Expected to replace with group #1, but the group was not matched');
+
+        // when
+        pattern('Foo(Bar)?(Cat)')->replaced('FooCat')->withGroup(1);
+    }
 }

@@ -4,7 +4,7 @@ namespace Test\Fakes\CleanRegex\Replaced\OccurrencesAmount;
 use Test\Fakes\CleanRegex\Internal\ThrowSubject;
 use Test\Utils\Fails;
 use TRegx\CleanRegex\Internal\Definition;
-use TRegx\CleanRegex\Replaced\OccurrencesAmount;
+use TRegx\CleanRegex\Replaced\Expectation\OccurrencesAmount;
 
 class ThrowOccurrences extends OccurrencesAmount
 {

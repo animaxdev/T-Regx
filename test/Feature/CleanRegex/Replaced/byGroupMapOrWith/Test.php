@@ -3,7 +3,6 @@ namespace Test\Feature\CleanRegex\Replaced\byGroupMapOrWith;
 
 use PHPUnit\Framework\TestCase;
 use Test\Utils\ExactExceptionMessage;
-use TRegx\CleanRegex\Exception\GroupNotMatchedException;
 use TRegx\CleanRegex\Exception\MissingReplacementKeyException;
 use TRegx\CleanRegex\Exception\NonexistentGroupException;
 
@@ -146,31 +145,37 @@ class Test extends TestCase
     /**
      * @test
      */
-    public function shouldThrow_groupNotMatch_middleGroup()
+    public function shouldReplace_groupNotMatch_middleGroup()
     {
-        // then
-        $this->expectException(GroupNotMatchedException::class);
-        $this->expectExceptionMessage("Expected to replace with group 'bar', but the group was not matched");
-
         // when
-        pattern('Foo(?<bar>Bar)?(Car)')
-            ->replaced('FooCar')
-            ->byGroupMapOrWith('bar', ['' => 'failure'], 'Unused');
+        $result = pattern('Foo(?<bar>Bar)?(Car)')->replaced('"FooCar"')->byGroupMapOrWith('bar', [], 'Otherwise');
+
+        // then
+        $this->assertSame('"Otherwise"', $result);
     }
 
     /**
      * @test
      */
-    public function shouldThrow_groupNotMatch_middleGroup_thirdIndex()
+    public function shouldReplace_groupNotMatch_middleGroup_thirdIndex()
     {
-        // then
-        $this->expectException(GroupNotMatchedException::class);
-        $this->expectExceptionMessage("Expected to replace with group 'bar', but the group was not matched");
-
         // when
-        pattern('Foo(?<bar>Bar)?(?<car>Car)')
-            ->replaced('FooBarCar FooBarCar FooCar')
-            ->byGroupMapOrWith('bar', ['Bar' => 'Foo'], 'Unused');
+        $result = pattern('Foo(?<bar>Bar)?(?<car>Car)')->replaced('FooBarCar FooBarCar "FooCar"')->byGroupMapOrWith('bar', ['Bar' => 'Door'], 'Otherwise');
+
+        // then
+        $this->assertSame('Door Door "Otherwise"', $result);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldReplaceWithEmptyOccurrence()
+    {
+        // when
+        $result = pattern('Foo()Cat')->replaced('"FooCat"')->byGroupMapOrWith(1, ['' => 'Flash'], 'Failure');
+
+        // then
+        $this->assertSame('"Flash"', $result);
     }
 
     /**

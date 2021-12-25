@@ -163,4 +163,16 @@ class Test extends TestCase
         // then
         $this->assertSame('<Else>, <Bar>', $result);
     }
+
+    /**
+     * @test
+     */
+    public function shouldReplace_ForUnmatchedGroup_Middle()
+    {
+        // when
+        $result = pattern('Foo(Bar)?(Cat)')->replaced('"FooCat"')->withGroupOrWith(1, 'Door');
+
+        // then
+        $this->assertSame('"Door"', $result);
+    }
 }

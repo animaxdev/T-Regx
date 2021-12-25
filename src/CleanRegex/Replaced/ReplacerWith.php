@@ -4,6 +4,7 @@ namespace TRegx\CleanRegex\Replaced;
 use TRegx\CleanRegex\Internal\Definition;
 use TRegx\CleanRegex\Internal\Replace\ReplaceReferences;
 use TRegx\CleanRegex\Internal\Subject;
+use TRegx\CleanRegex\Replaced\Expectation\Listener;
 use TRegx\SafeRegex\preg;
 
 class ReplacerWith

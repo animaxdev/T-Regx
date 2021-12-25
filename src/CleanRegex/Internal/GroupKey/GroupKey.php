@@ -2,6 +2,7 @@
 namespace TRegx\CleanRegex\Internal\GroupKey;
 
 use TRegx\CleanRegex\Internal\InvalidArgument;
+use TRegx\CleanRegex\Internal\Model\GroupHasAware;
 use TRegx\CleanRegex\Internal\Type\ValueType;
 
 abstract class GroupKey
@@ -30,6 +31,11 @@ abstract class GroupKey
     public abstract function nameOrIndex();
 
     public abstract function full(): bool;
+
+    public function exists(GroupHasAware $groupAware): bool
+    {
+        return $groupAware->hasGroup($this->nameOrIndex());
+    }
 
     public abstract function __toString(): string;
 }

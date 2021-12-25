@@ -152,4 +152,16 @@ class Test extends TestCase
         // when
         pattern('?')->replaced('Bar')->withGroupOrEmpty(2);
     }
+
+    /**
+     * @test
+     */
+    public function shouldReplace_ForUnmatchedGroup_Middle()
+    {
+        // when
+        $result = pattern('Foo(Bar)?(Cat)')->replaced('"FooCat"')->withGroupOrEmpty(1);
+
+        // then
+        $this->assertSame('""', $result);
+    }
 }

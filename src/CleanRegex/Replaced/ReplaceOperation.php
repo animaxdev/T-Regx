@@ -19,11 +19,7 @@ interface ReplaceOperation
 
     public function byMap(array $occurrencesAndReplacements): string;
 
-    public function withGroupOr($nameOrIndex): GroupReplacement;
-
     public function byGroupMap($nameOrIndex, array $occurrencesAndReplacements): string;
-
-    public function byGroupMapOr($nameOrIndex, array $occurrencesAndReplacements): GroupReplacement;
 
     public function byGroupMapOrIgnore($nameOrIndex, array $occurrencesAndReplacements): string;
 

@@ -163,4 +163,16 @@ class Test extends TestCase
         // then
         $this->assertSame('Foo Bar', $result);
     }
+
+    /**
+     * @test
+     */
+    public function shouldIgnore_ForUnmatchedGroup_Middle()
+    {
+        // when
+        $result = pattern('Foo(Bar)?(Cat)')->replaced('"FooCat"')->withGroupOrIgnore(1);
+
+        // then
+        $this->assertSame('"FooCat"', $result);
+    }
 }

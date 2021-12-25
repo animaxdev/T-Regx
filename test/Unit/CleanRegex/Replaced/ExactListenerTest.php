@@ -3,7 +3,7 @@ namespace Test\Unit\TRegx\CleanRegex\Replaced;
 
 use PHPUnit\Framework\TestCase;
 use TRegx\CleanRegex\Exception\ReplacementExpectationFailedException;
-use TRegx\CleanRegex\Replaced\ExactListener;
+use TRegx\CleanRegex\Replaced\Expectation\ExactListener;
 
 class ExactListenerTest extends TestCase
 {

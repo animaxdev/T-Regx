@@ -3,7 +3,6 @@ namespace Test\Feature\CleanRegex\Replaced\byGroupMapOrEmpty;
 
 use PHPUnit\Framework\TestCase;
 use Test\Utils\ExactExceptionMessage;
-use TRegx\CleanRegex\Exception\GroupNotMatchedException;
 use TRegx\CleanRegex\Exception\MissingReplacementKeyException;
 use TRegx\CleanRegex\Exception\NonexistentGroupException;
 
@@ -134,7 +133,7 @@ class Test extends TestCase
     /**
      * @test
      */
-    public function shouldThrow_groupNotMatch()
+    public function shouldReplace_withEmpty_forUnmatchedGroup()
     {
         // when
         $result = pattern('Foo(Bar)?')->replaced('Value:Foo, Value:FooBar')->byGroupMapOrEmpty(1, ['Bar' => 'Cat']);
@@ -146,16 +145,13 @@ class Test extends TestCase
     /**
      * @test
      */
-    public function shouldThrow_groupNotMatch_middleGroup()
+    public function shouldReplace_withEmpty_forUnmatchedGroup_middleGroup()
     {
-        // then
-        $this->expectException(GroupNotMatchedException::class);
-        $this->expectExceptionMessage("Expected to replace with group 'bar', but the group was not matched");
-
         // when
-        pattern('Foo(?<bar>Bar)?(Car)')
-            ->replaced('FooCar')
-            ->byGroupMapOrEmpty('bar', ['' => 'failure']);
+        $result = pattern('Foo(?<bar>Bar)?(Car)')->replaced('"FooCar"')->byGroupMapOrEmpty('bar', ['' => 'failure']);
+
+        // then
+        $this->assertSame('""', $result);
     }
 
     /**
@@ -163,14 +159,23 @@ class Test extends TestCase
      */
     public function shouldThrow_groupNotMatch_middleGroup_thirdIndex()
     {
-        // then
-        $this->expectException(GroupNotMatchedException::class);
-        $this->expectExceptionMessage("Expected to replace with group 'bar', but the group was not matched");
-
         // when
-        pattern('Foo(?<bar>Bar)?(?<car>Car)')
-            ->replaced('FooBarCar FooBarCar FooCar')
-            ->byGroupMapOrEmpty('bar', ['Bar' => 'Foo']);
+        $result = pattern('Foo(?<bar>Bar)?(?<car>Car)')->replaced('FooBarCar FooBarCar "FooCar"')->byGroupMapOrEmpty('bar', ['Bar' => 'Door']);
+
+        // then
+        $this->assertSame('Door Door ""', $result);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldReplaceWithEmptyOccurrence()
+    {
+        // when
+        $result = pattern('Foo()Cat')->replaced('"FooCat"')->byGroupMapOrEmpty(1, ['' => 'Bar']);
+
+        // then
+        $this->assertSame('"Bar"', $result);
     }
 
     /**

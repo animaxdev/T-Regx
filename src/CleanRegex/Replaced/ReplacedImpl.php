@@ -3,6 +3,10 @@ namespace TRegx\CleanRegex\Replaced;
 
 use TRegx\CleanRegex\Internal\Definition;
 use TRegx\CleanRegex\Internal\Subject;
+use TRegx\CleanRegex\Replaced\Expectation\AtLeastListenerType;
+use TRegx\CleanRegex\Replaced\Expectation\AtMostListenerType;
+use TRegx\CleanRegex\Replaced\Expectation\ExactListenerType;
+use TRegx\CleanRegex\Replaced\Expectation\IgnoreListener;
 
 class ReplacedImpl implements Replaced
 {
@@ -39,27 +43,17 @@ class ReplacedImpl implements Replaced
 
     public function exactly(): ReplaceExpectation
     {
-        return new ReplaceExpectationImpl($this->definition, $this->subject, new ExactListenerFactory($this->definition, $this->subject));
+        return new ReplaceExpectationImpl($this->definition, $this->subject, new ExactListenerType($this->definition, $this->subject));
     }
 
     public function atMost(): ReplaceExpectation
     {
-        return new ReplaceExpectationImpl($this->definition, $this->subject, new AtMostListenerFactory($this->definition, $this->subject));
+        return new ReplaceExpectationImpl($this->definition, $this->subject, new AtMostListenerType($this->definition, $this->subject));
     }
 
     public function atLeast(): ReplaceExpectation
     {
-        return new ReplaceExpectationImpl($this->definition, $this->subject, new AtLeastListenerFactory());
-    }
-
-    public function withGroupOr($nameOrIndex): GroupReplacement
-    {
-        // TODO: Implement withGroupOr() method.
-    }
-
-    public function byGroupMapOr($nameOrIndex, array $occurrencesAndReplacements): GroupReplacement
-    {
-        // TODO: Implement byGroupMapOr() method.
+        return new ReplaceExpectationImpl($this->definition, $this->subject, new AtLeastListenerType());
     }
 
     public function focus($nameOrIndex): Basic

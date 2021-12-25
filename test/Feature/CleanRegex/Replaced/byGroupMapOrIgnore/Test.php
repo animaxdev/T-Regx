@@ -3,7 +3,6 @@ namespace Test\Feature\CleanRegex\Replaced\byGroupMapOrIgnore;
 
 use PHPUnit\Framework\TestCase;
 use Test\Utils\ExactExceptionMessage;
-use TRegx\CleanRegex\Exception\GroupNotMatchedException;
 use TRegx\CleanRegex\Exception\MissingReplacementKeyException;
 use TRegx\CleanRegex\Exception\NonexistentGroupException;
 
@@ -146,31 +145,37 @@ class Test extends TestCase
     /**
      * @test
      */
-    public function shouldThrow_groupNotMatch_middleGroup()
+    public function shouldReplace_groupNotMatch_middleGroup()
     {
-        // then
-        $this->expectException(GroupNotMatchedException::class);
-        $this->expectExceptionMessage("Expected to replace with group 'bar', but the group was not matched");
-
         // when
-        pattern('Foo(?<bar>Bar)?(Car)')
-            ->replaced('FooCar')
-            ->byGroupMapOrIgnore('bar', ['' => 'failure']);
+        $result = pattern('Foo(?<bar>Bar)?(Car)')->replaced('FooCar')->byGroupMapOrIgnore('bar', ['' => 'failure']);
+
+        // then
+        $this->assertSame('FooCar', $result);
     }
 
     /**
      * @test
      */
-    public function shouldThrow_groupNotMatch_middleGroup_thirdIndex()
+    public function shouldReplace_groupNotMatch_middleGroup_thirdIndex()
     {
-        // then
-        $this->expectException(GroupNotMatchedException::class);
-        $this->expectExceptionMessage("Expected to replace with group 'bar', but the group was not matched");
-
         // when
-        pattern('Foo(?<bar>Bar)?(?<car>Car)')
-            ->replaced('FooBarCar FooBarCar FooCar')
-            ->byGroupMapOrIgnore('bar', ['Bar' => 'Foo']);
+        $result = pattern('Foo(?<bar>Bar)?(?<car>Car)')->replaced('FooBarCar FooBarCar "FooCar"')->byGroupMapOrIgnore('bar', ['Bar' => 'Door']);
+
+        // then
+        $this->assertSame('Door Door "FooCar"', $result);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldReplaceWithEmptyOccurrence()
+    {
+        // when
+        $result = pattern('Foo()Cat')->replaced('"FooCat"')->byGroupMapOrIgnore(1, ['' => 'Door']);
+
+        // then
+        $this->assertSame('"Door"', $result);
     }
 
     /**

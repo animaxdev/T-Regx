@@ -2,6 +2,7 @@
 namespace TRegx\CleanRegex\Internal\GroupKey;
 
 use TRegx\CleanRegex\Exception\InternalCleanRegexException;
+use TRegx\CleanRegex\Internal\Model\GroupHasAware;
 
 class WholeMatch extends GroupKey
 {
@@ -11,6 +12,11 @@ class WholeMatch extends GroupKey
     }
 
     public function full(): bool
+    {
+        return true;
+    }
+
+    public function exists(GroupHasAware $groupAware): bool
     {
         return true;
     }
