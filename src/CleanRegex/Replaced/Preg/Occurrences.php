@@ -1,7 +1,7 @@
 <?php
 namespace TRegx\CleanRegex\Replaced\Preg;
 
-class AllOccurrences
+class Occurrences
 {
     /** @var Analyzed */
     private $analyzed;

@@ -5,7 +5,7 @@ use TRegx\CleanRegex\Internal\Model\GroupAware;
 use TRegx\CleanRegex\Internal\Subject;
 use TRegx\CleanRegex\Replaced\Callback\Detail\Constituent\Constituent;
 use TRegx\CleanRegex\Replaced\Callback\ReplaceFunction;
-use TRegx\CleanRegex\Replaced\Preg\AllOccurrences;
+use TRegx\CleanRegex\Replaced\Preg\Occurrences;
 
 class DetailCallback
 {
@@ -15,12 +15,12 @@ class DetailCallback
     private $subject;
     /** @var int */
     private $limit;
-    /** @var AllOccurrences */
+    /** @var Occurrences */
     private $occurrences;
     /** @var ReplaceFunction */
     private $function;
 
-    public function __construct(GroupAware $groupAware, Subject $subject, int $limit, AllOccurrences $occurrences, ReplaceFunction $function)
+    public function __construct(GroupAware $groupAware, Subject $subject, int $limit, Occurrences $occurrences, ReplaceFunction $function)
     {
         $this->groupAware = $groupAware;
         $this->subject = $subject;

@@ -5,7 +5,7 @@ use TRegx\CleanRegex\Internal\GroupKey\GroupKey;
 use TRegx\CleanRegex\Internal\Message\Replace\Map\ForGroupMessage;
 use TRegx\CleanRegex\Replaced\Replacements;
 
-class ByMapGroupOperation implements GroupOperation
+class ReplacementsGroupOperation implements GroupOperation
 {
     /** @var Replacements */
     private $replacements;

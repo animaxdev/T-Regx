@@ -19,7 +19,7 @@ use TRegx\CleanRegex\Match\Details\Groups\IndexedGroups;
 use TRegx\CleanRegex\Match\Details\Groups\NamedGroups;
 use TRegx\CleanRegex\Replaced\Callback\Detail\Constituent\Constituent;
 use TRegx\CleanRegex\Replaced\Callback\Detail\Group\Group;
-use TRegx\CleanRegex\Replaced\Preg\AllOccurrences;
+use TRegx\CleanRegex\Replaced\Preg\Occurrences;
 use TRegx\CleanRegex\Replaced\UserData;
 
 class ReplaceDetail implements Detail
@@ -44,19 +44,19 @@ class ReplaceDetail implements Detail
     private $coords;
     /** @var UserData */
     private $userData;
-    /** @var AllOccurrences */
+    /** @var Occurrences */
     private $occurrences;
     /** @var IndexedGroups */
     private $indexedGroups;
     /** @var NamedGroups */
     private $namedGroups;
 
-    public function __construct(GroupAware     $groupAware,
-                                Subject        $subject,
-                                int            $index,
-                                int            $limit,
-                                Constituent    $constituent,
-                                AllOccurrences $occurrences)
+    public function __construct(GroupAware  $groupAware,
+                                Subject     $subject,
+                                int         $index,
+                                int         $limit,
+                                Constituent $constituent,
+                                Occurrences $occurrences)
     {
         $this->subject = $subject;
         $this->groupAware = $groupAware;

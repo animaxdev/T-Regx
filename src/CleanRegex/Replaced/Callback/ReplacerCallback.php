@@ -4,7 +4,7 @@ namespace TRegx\CleanRegex\Replaced\Callback;
 use TRegx\CleanRegex\Internal\Model\GroupAware;
 use TRegx\CleanRegex\Internal\Subject;
 use TRegx\CleanRegex\Replaced\Callback\Detail\DetailCallback;
-use TRegx\CleanRegex\Replaced\Preg\AllOccurrences;
+use TRegx\CleanRegex\Replaced\Preg\Occurrences;
 
 class ReplacerCallback
 {
@@ -14,12 +14,12 @@ class ReplacerCallback
     private $subject;
     /** @var int */
     private $limit;
-    /** @var AllOccurrences */
+    /** @var Occurrences */
     private $occurrences;
     /** @var ReplacePlan */
     private $replacePlan;
 
-    public function __construct(GroupAware $aware, Subject $subject, int $limit, AllOccurrences $occurrences, ReplacePlan $replacePlan)
+    public function __construct(GroupAware $aware, Subject $subject, int $limit, Occurrences $occurrences, ReplacePlan $replacePlan)
     {
         $this->aware = $aware;
         $this->subject = $subject;
