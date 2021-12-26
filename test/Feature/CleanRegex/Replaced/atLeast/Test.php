@@ -2,6 +2,7 @@
 namespace Test\Feature\CleanRegex\Replaced\atLeast;
 
 use PHPUnit\Framework\TestCase;
+use Test\Utils\Functions;
 use TRegx\CleanRegex\Exception\ReplacementExpectationFailedException;
 
 /**
@@ -69,5 +70,31 @@ class Test extends TestCase
 
         // when
         pattern('Foo')->replaced('Bar')->atLeast()->first()->with('Bar');
+    }
+
+    /**
+     * @test
+     */
+    public function shouldAtLeastFirst_throwForSingleMatch_callback()
+    {
+        // then
+        $this->expectException(ReplacementExpectationFailedException::class);
+        $this->expectExceptionMessage('Expected to perform at least 1 replacement(s), but 0 replacement(s) were actually performed');
+
+        // when
+        pattern('Foo')->replaced('Bar')->atLeast()->first()->callback(Functions::fail());
+    }
+
+    /**
+     * @test
+     */
+    public function shouldAtLeastOnly2_throwForSingleMatch_byMap()
+    {
+        // then
+        $this->expectException(ReplacementExpectationFailedException::class);
+        $this->expectExceptionMessage('Expected to perform at least 2 replacement(s), but 0 replacement(s) were actually performed');
+
+        // when
+        pattern('Foo')->replaced('Bar')->atLeast()->only(2)->byMap([]);
     }
 }
