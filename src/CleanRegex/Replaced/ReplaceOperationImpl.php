@@ -38,12 +38,13 @@ class ReplaceOperationImpl implements ReplaceOperation
 
     public function __construct(Definition $definition, Subject $subject, int $limit, Listener $listener)
     {
-        $this->replacerWith = new ReplacerWith($definition, $subject, $limit, $listener);
         $groupAware = new LightweightGroupAware($definition);
         $analyzed = new Analyzed($definition, $subject);
         $matchAware = new IndexedMatchAware($analyzed);
+
+        $this->replacerWith = new ReplacerWith($definition, $subject, $limit, $listener);
         $this->replacerCallback = new ReplacerCallback($groupAware, $subject, $limit, new Occurrences($analyzed),
-            new ReplacePlan($definition, $subject, $limit, new Constituents($groupAware, $matchAware, new Fetcher($analyzed))));
+            new ReplacePlan($definition, $subject, $limit, new Constituents($groupAware, $matchAware, new Fetcher($analyzed)), $listener));
         $this->groupReplace = new ReplacerWithGroup($definition, $subject, $limit, $groupAware, new SequenceMatchAware($matchAware));
         $this->textCalled = new TextCalled($definition, $subject, $limit);
     }

@@ -5,21 +5,21 @@ use TRegx\CleanRegex\Internal\Model\Match\GroupEntries;
 
 class MatchAllEntries implements GroupEntries
 {
-    /** @var array[] */
-    private $allMatchOffset;
+    /** @var Analyzed */
+    private $analyzed;
     /** @var int */
     private $index;
 
-    public function __construct(array $allMatchOffset, int $index)
+    public function __construct(Analyzed $analyzed, int $index)
     {
-        $this->allMatchOffset = $allMatchOffset;
+        $this->analyzed = $analyzed;
         $this->index = $index;
     }
 
     public function groupTexts(): array
     {
         $texts = [];
-        foreach ($this->allMatchOffset as $group => $match) {
+        foreach ($this->analyzed->analyzedSubject() as $group => $match) {
             [$text, $offset] = $match[$this->index];
             if ($offset === -1) {
                 $texts[$group] = null;
@@ -33,7 +33,7 @@ class MatchAllEntries implements GroupEntries
     public function groupOffsets(): array
     {
         $offsets = [];
-        foreach ($this->allMatchOffset as $group => $match) {
+        foreach ($this->analyzed->analyzedSubject() as $group => $match) {
             [$text, $offset] = $match[$this->index];
             if ($offset === -1) {
                 $offsets[$group] = null;

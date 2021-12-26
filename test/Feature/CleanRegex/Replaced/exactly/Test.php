@@ -3,6 +3,8 @@ namespace Test\Feature\CleanRegex\Replaced\exactly;
 
 use PHPUnit\Framework\TestCase;
 use Test\Utils\CatastrophicBacktracking;
+use Test\Utils\ExactExceptionMessage;
+use Test\Utils\Functions;
 use TRegx\CleanRegex\Exception\ReplacementExpectationFailedException;
 use TRegx\SafeRegex\Exception\CatastrophicBacktrackingException;
 
@@ -11,7 +13,7 @@ use TRegx\SafeRegex\Exception\CatastrophicBacktrackingException;
  */
 class Test extends TestCase
 {
-    use CatastrophicBacktracking;
+    use CatastrophicBacktracking, ExactExceptionMessage;
 
     /**
      * @test
@@ -64,5 +66,47 @@ class Test extends TestCase
 
         // when
         pattern($pattern)->replaced($subject)->exactly()->only(2)->with('Bar');
+    }
+
+    /**
+     * @test
+     */
+    public function testExactlyFirst_Insufficient_callback()
+    {
+        // then
+        $this->expectException(ReplacementExpectationFailedException::class);
+        $this->expectExceptionMessage('Expected to perform exactly 1 replacement(s), but 0 replacement(s) were actually performed');
+
+        // when
+        pattern('Foo')->replaced('Bar')->exactly()->first()->callback(Functions::fail());
+    }
+
+    /**
+     * @test
+     */
+    public function testAtMostFirst_Superfluous_callback()
+    {
+        // then
+        $this->expectException(ReplacementExpectationFailedException::class);
+        $this->expectExceptionMessage('Expected to perform exactly 1 replacement(s), but at least 2 replacement(s) would have been performed');
+
+        // when
+        pattern('Foo')->replaced('Foo, Foo, Foo')->exactly()->first()->callback(Functions::constant('Bar'));
+    }
+
+    /**
+     * @test
+     */
+    public function shouldThrowCatastrophicBacktracking_WhileCheckingLast_callback()
+    {
+        // given
+        [$pattern, $subject] = $this->catastrophicBacktracking();
+
+        // then
+        $this->expectException(ReplacementExpectationFailedException::class);
+        $this->expectExceptionMessage('Expected to perform exactly 1 replacement(s), but at least 2 replacement(s) would have been performed');
+
+        // when
+        pattern($pattern)->replaced($subject)->exactly()->first()->callback(Functions::constant('Foo'));
     }
 }

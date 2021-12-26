@@ -19,12 +19,12 @@ class AbstractionCalled
         $this->callback = $callback;
     }
 
-    public function replaceStrings(LegacyModel $model, int $index): string
+    public function replaceLegacy(LegacyModel $model, int $index): string
     {
         return $this->callback->replace($this->constituents->legacyConstituent($model, $index), $index);
     }
 
-    public function replaceOffsetArrays(StandardModel $model, int $index): string
+    public function replaceStandard(StandardModel $model, int $index): string
     {
         return $this->callback->replace($this->constituents->standardConstituent($model, $index), $index);
     }

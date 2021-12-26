@@ -3,19 +3,22 @@ namespace TRegx\CleanRegex\Replaced\Preg;
 
 class ByteOffset
 {
-    /** @var array[] */
-    private $allMatchOffset;
+    /** @var Analyzed */
+    private $analyzed;
     /** @var int */
     private $index;
 
-    public function __construct(array $allMatchOffset, int $index)
+    public function __construct(Analyzed $analyzed, int $index)
     {
-        $this->allMatchOffset = $allMatchOffset;
+        $this->analyzed = $analyzed;
         $this->index = $index;
     }
 
     public function byteOffset(): int
     {
-        return $this->allMatchOffset[0][$this->index][1];
+        // TODO perhaps you could do preg_match first, for the offset,
+        // and only call preg_match_all() if it's uncertain, and only
+        // for index 1
+        return $this->analyzed->analyzedSubject()[0][$this->index][1];
     }
 }

@@ -15,11 +15,11 @@ class Fetcher
 
     public function groupEntries(int $index): GroupEntries
     {
-        return new MatchAllEntries($this->analyzed->analyzedSubject(), $index);
+        return new MatchAllEntries($this->analyzed, $index);
     }
 
     public function byteOffset(int $index): ByteOffset
     {
-        return new ByteOffset($this->analyzed->analyzedSubject(), $index);
+        return new ByteOffset($this->analyzed, $index);
     }
 }

@@ -12,22 +12,22 @@ class ReplaceExpectationImpl implements ReplaceExpectation
     /** @var Subject */
     private $subject;
     /** @var ListenerType */
-    private $factory;
+    private $type;
 
-    public function __construct(Definition $definition, Subject $subject, ListenerType $factory)
+    public function __construct(Definition $definition, Subject $subject, ListenerType $type)
     {
         $this->definition = $definition;
         $this->subject = $subject;
-        $this->factory = $factory;
+        $this->type = $type;
     }
 
     public function first(): ReplaceOperation
     {
-        return new ReplaceOperationImpl($this->definition, $this->subject, 1, $this->factory->listener(1));
+        return new ReplaceOperationImpl($this->definition, $this->subject, 1, $this->type->listener(1));
     }
 
     public function only(int $amount): ReplaceOperation
     {
-        return new ReplaceOperationImpl($this->definition, $this->subject, $amount, $this->factory->listener($amount));
+        return new ReplaceOperationImpl($this->definition, $this->subject, $amount, $this->type->listener($amount));
     }
 }

@@ -6,6 +6,7 @@ use TRegx\CleanRegex\Internal\Subject;
 use TRegx\CleanRegex\Replaced\Callback\Detail\Constituent\Constituents;
 use TRegx\CleanRegex\Replaced\Callback\Detail\Constituent\Low;
 use TRegx\CleanRegex\Replaced\Callback\Detail\DetailCallback;
+use TRegx\CleanRegex\Replaced\Expectation\Listener;
 
 class ReplacePlan
 {
@@ -14,9 +15,9 @@ class ReplacePlan
     /** @var Constituents */
     private $constituents;
 
-    public function __construct(Definition $definition, Subject $subject, int $limit, Constituents $constituents)
+    public function __construct(Definition $definition, Subject $subject, int $limit, Constituents $constituents, Listener $listener)
     {
-        $this->low = new Low($definition, $subject, $limit);
+        $this->low = new Low($definition, $subject, $limit, $listener);
         $this->constituents = $constituents;
     }
 
