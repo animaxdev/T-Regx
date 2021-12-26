@@ -6,6 +6,7 @@ use TRegx\CleanRegex\Internal\Definition;
 use TRegx\CleanRegex\Internal\GroupKey\GroupKey;
 use TRegx\CleanRegex\Internal\Model\GroupAware;
 use TRegx\CleanRegex\Internal\Subject;
+use TRegx\CleanRegex\Replaced\Expectation\Listener;
 use TRegx\SafeRegex\preg;
 
 class ReplacerWithGroup
@@ -20,18 +21,22 @@ class ReplacerWithGroup
     private $groupAware;
     /** @var SequenceMatchAware */
     private $matchAware;
+    /** @var Listener */
+    private $listener;
 
     public function __construct(Definition         $definition,
                                 Subject            $subject,
                                 int                $limit,
                                 GroupAware         $groupAware,
-                                SequenceMatchAware $matchAware)
+                                SequenceMatchAware $matchAware,
+                                Listener           $listener)
     {
         $this->definition = $definition;
         $this->subject = $subject;
         $this->limit = $limit;
         $this->groupAware = $groupAware;
         $this->matchAware = $matchAware;
+        $this->listener = $listener;
     }
 
     public function replaced(GroupKey $group, MissingGroupHandler $handler, GroupOperation $operation): string
@@ -40,6 +45,7 @@ class ReplacerWithGroup
         if ($count === 0 && !$group->exists($this->groupAware)) {
             throw new NonexistentGroupException($group);
         }
+        $this->listener->replaced($count);
         return $replaced;
     }
 

@@ -45,7 +45,7 @@ class ReplaceOperationImpl implements ReplaceOperation
         $this->replacerWith = new ReplacerWith($definition, $subject, $limit, $listener);
         $this->replacerCallback = new ReplacerCallback($groupAware, $subject, $limit, new Occurrences($analyzed),
             new ReplacePlan($definition, $subject, $limit, new Constituents($groupAware, $matchAware, new Fetcher($analyzed)), $listener));
-        $this->groupReplace = new ReplacerWithGroup($definition, $subject, $limit, $groupAware, new SequenceMatchAware($matchAware));
+        $this->groupReplace = new ReplacerWithGroup($definition, $subject, $limit, $groupAware, new SequenceMatchAware($matchAware), $listener);
         $this->textCalled = new TextCalled($definition, $subject, $limit, $listener);
     }
 

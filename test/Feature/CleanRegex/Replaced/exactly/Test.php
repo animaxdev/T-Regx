@@ -134,4 +134,29 @@ class Test extends TestCase
         // when
         pattern('Foo')->replaced('"Foo", Foo')->exactly()->first()->byMap(['Foo' => 'Bar']);
     }
+
+    /**
+     * @test
+     */
+    public function shouldReplaceExactlyFirst_withGroup()
+    {
+        // when
+        $result = pattern('Foo(\d+)')->replaced('"Foo14"')->exactly()->first()->withGroup(1);
+
+        // then
+        $this->assertSame('"14"', $result);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldReplaceExactlyFirst_Superfluous_withGroup()
+    {
+        // then
+        $this->expectException(ReplacementExpectationFailedException::class);
+        $this->expectExceptionMessage('Expected to perform exactly 1 replacement(s), but at least 2 replacement(s) would have been performed');
+
+        // when
+        pattern('(Foo)')->replaced('"Foo", Foo')->exactly()->first()->withGroup(1);
+    }
 }
